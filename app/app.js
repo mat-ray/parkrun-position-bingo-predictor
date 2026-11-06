@@ -735,7 +735,7 @@ function rangeForPosition(pos, opts) {
   return { ...bandFromStats(st, "nearby", false), volatility: "low-data" };
 }
 
-async function predict() {
+async function predict({ scroll = true } = {}) {
   const results = document.getElementById("results");
   const body = document.getElementById("results-body");
   body.innerHTML = "";
@@ -765,7 +765,7 @@ async function predict() {
       + `finish. Run whatever time you fancy!</div>`
       + `</div>`;
     results.hidden = false;
-    results.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (scroll) results.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
 
@@ -942,7 +942,7 @@ async function predict() {
   results.hidden = false;
   }  // end renderResults
 
-  results.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (scroll) results.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // Lower = more reliable. Shared by the per-number best and the overall summary.
@@ -1299,7 +1299,7 @@ function renderSeasonBanner(body, useSeason, targetDate) {
 function wireControls() {
   document.getElementById("select-all").addEventListener("click", () => setAll(true));
   document.getElementById("clear-all").addEventListener("click", () => setAll(false));
-  document.getElementById("predict").addEventListener("click", predict);
+  document.getElementById("predict").addEventListener("click", () => predict());
 
   const onSetupChange = () => { updateSeasonMeta(); saveState(); };
   document.getElementById("target-date").addEventListener("change", onSetupChange);
@@ -1323,8 +1323,9 @@ function wireControls() {
     unitPace.setAttribute("aria-pressed", String(paceActive));
     unitTime.setAttribute("aria-pressed", String(!paceActive));
     saveState();
-    // Re-render only if results are already showing.
-    if (!document.getElementById("results").hidden) predict();
+    // Re-render in place (no scroll) only if results are already showing — a
+    // unit toggle shouldn't move the page from wherever you're reading.
+    if (!document.getElementById("results").hidden) predict({ scroll: false });
   };
   unitTime.addEventListener("click", () => setUnit("time"));
   unitPace.addEventListener("click", () => setUnit("pace"));
