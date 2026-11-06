@@ -58,11 +58,47 @@ offset, or weighting. Treat as research, not a quick add:
   device history would need a backend the project has so far avoided — probably
   not worth it just for this.
 
+### Auto-reconcile from the next results refresh (removes most data-entry friction)
+
+Key realisation: we don't need the user to *type in* their result. After the
+next `latestresults` refresh the app already has that event's finisher data, so
+it can pull the missing half of the outcome back automatically. The user only
+supplies the one thing the results data can't tell us: **which finisher was
+them.** Three ways to bridge that, with very different privacy costs:
+
+- **A. User enters their POSITION** ("I finished 108th on 2026-11-07"). The app
+  looks up the time recorded at position 108 that week and which needed numbers
+  108 ticked, then reconciles against the aim. Identity-free.
+- **B. User enters their TIME** (which they always know from their watch / result
+  text). The app does the inverse lookup — what position did that time land that
+  week — and reconciles. Also identity-free, and *time* is the number a runner
+  most reliably has to hand.
+- **C. User enters their parkrun ATHLETE ID once**, app finds their row every
+  week automatically. The frictionless dream — but see the hard constraint
+  below.
+
+**Hard constraint / privacy fork (don't cross this by accident):** the collector
+*deliberately strips names and athlete IDs*. A raw finisher record is only
+`{position, time_seconds, gender, age_group}`, and the shipped bundle is purely
+statistical (per-position bands — individual finishers aren't even in it). So:
+
+- A and B work with the data model as-is, except the app would need that
+  specific event+date's actual position->time results available (the raw data
+  has this; the *shipped bundle* currently doesn't — it ships aggregated bands
+  only). Modest, PII-free data change.
+- **C requires the pipeline to START keeping names/IDs** — a reversal of the
+  privacy-preserving design, and on the *public* GitHub Pages host it would mean
+  **publishing identifiable per-runner results.** That's a policy decision, not
+  a feature toggle. Prefer A or B unless there's a strong reason.
+
 ### Rough first step, when picked up
 
-Ship **Level 1 only**, local, with a one-tap logging flow and a single honest
-"your aimed hit-rate" number. Prove the data-entry flow is frictionless before
-even considering Level 2.
+Ship **Level 1, identity-free (option B: enter your time)**, local, with the app
+auto-reconciling position + ticks after the next refresh, and a single honest
+"your aimed hit-rate" number. This needs the per-event, per-week position->time
+results shipped to the app (or fetched), which is a small, PII-free extension of
+the bundle. Prove this frictionless flow before considering Level 2 (feedback
+into predictions) or option C (identity, with its privacy cost).
 
 ---
 
