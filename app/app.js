@@ -8,7 +8,11 @@ const state = {
   event: null,       // loaded aggregated dataset for the selected slug
   slug: null,        // currently selected event slug
   needed: new Set(), // bingo numbers (0..99) still required
+  unit: "time",      // "time" (finish time) or "pace" (min/km) — display only
 };
+
+// parkrun is always 5 km, so pace (seconds per km) = finish time / 5.
+const COURSE_KM = 5;
 
 // ---------------------------------------------------------------------------
 // Persistence (localStorage) — remembers your card + setup between visits.
@@ -28,6 +32,7 @@ function saveState() {
     useWeather: document.getElementById("use-weather").checked,
     paceMin: document.getElementById("pace-min").value,
     paceMax: document.getElementById("pace-max").value,
+    unit: state.unit,
     savedAt: Date.now(),
   };
   try {
@@ -100,6 +105,18 @@ function applySaved(payload) {
   if (typeof payload.paceMax === "string") {
     document.getElementById("pace-max").value = payload.paceMax;
   }
+  if (payload.unit === "pace" || payload.unit === "time") {
+    state.unit = payload.unit;
+    const paceActive = state.unit === "pace";
+    const ut = document.getElementById("unit-time");
+    const up = document.getElementById("unit-pace");
+    if (ut && up) {
+      up.classList.toggle("is-active", paceActive);
+      ut.classList.toggle("is-active", !paceActive);
+      up.setAttribute("aria-pressed", String(paceActive));
+      ut.setAttribute("aria-pressed", String(!paceActive));
+    }
+  }
   updateSeasonMeta();
   markSaved(payload.savedAt);
 }
@@ -127,6 +144,21 @@ function fmtTime(seconds) {
   const s = seconds % 60;
   if (h > 0) return `${h}:${pad2(m)}:${pad2(s)}`;
   return `${m}:${pad2(s)}`;
+}
+
+// Format a TARGET value (a finish-time quantity) honouring the time/pace toggle.
+// In pace mode the seconds are per-km (time / 5 km) and we append "/km" so the
+// unit is unambiguous in-cell. Used everywhere a target time/range/swing shows.
+function fmtTarget(seconds) {
+  if (seconds == null || isNaN(seconds)) return "\u2014";
+  if (state.unit === "pace") return `${fmtTime(seconds / COURSE_KM)}/km`;
+  return fmtTime(seconds);
+}
+
+// The results heading, reflecting the current unit ("times" vs "paces").
+function resultsTitle(eventName) {
+  const noun = state.unit === "pace" ? "paces" : "times";
+  return `Target ${noun} for ${eventName}`;
 }
 
 // Parse "mm:ss" or "h:mm:ss" (or bare minutes) to seconds; null if blank/bad.
@@ -714,7 +746,7 @@ async function predict() {
   const meta = state.manifest.events.find((e) => e.slug === state.slug);
   const eventName = meta ? meta.name : state.slug;
   document.getElementById("results-title").textContent =
-    `Target times for ${eventName}`;
+    resultsTitle(eventName);
 
   if (state.needed.size === 0) {
     body.innerHTML = `<p class="empty">Select the numbers you still need above.</p>`;
@@ -771,7 +803,7 @@ async function predict() {
   function renderResults(weather) {
   body.innerHTML = "";
   document.getElementById("results-title").textContent =
-    `Target times for ${eventName}`;
+    resultsTitle(eventName);
   const weatherActive = weather && weather.state === "ok"
     && weather.slopeInfo && weather.slopeInfo.slope > 0;
 
@@ -867,19 +899,19 @@ async function predict() {
         const right = document.createElement("div");
         right.className = "target-time";
         const bandTxt = band.lo === band.hi
-          ? fmtTime(band.median)
-          : `${fmtTime(band.lo)}\u2013${fmtTime(band.hi)}`;
+          ? fmtTarget(band.median)
+          : `${fmtTarget(band.lo)}\u2013${fmtTarget(band.hi)}`;
         const fullTxt = band.min === band.max
           ? ""
-          : `<span class="full-range">full ${fmtTime(band.min)}\u2013${fmtTime(band.max)}</span>`;
+          : `<span class="full-range">full ${fmtTarget(band.min)}\u2013${fmtTarget(band.max)}</span>`;
         const vLabel = VOLATILITY_LABEL[band.volatility] || band.volatility;
         const vClass = ["low", "medium", "high"].includes(band.volatility)
           ? band.volatility : "unknown";
         const swing = band.iqr != null && band.iqr > 0
-          ? ` \u00b1${fmtTime(band.iqr)}` : "";
+          ? ` \u00b1${fmtTarget(band.iqr)}` : "";
         right.innerHTML =
           `<span class="aim">${bandTxt}</span>` +
-          `<span class="aim-sub">aim ${fmtTime(band.median)}</span>` +
+          `<span class="aim-sub">aim ${fmtTarget(band.median)}</span>` +
           fullTxt +
           `<span class="vol vol-${vClass}">${vLabel}${swing}</span>`;
 
@@ -1035,15 +1067,15 @@ function pickBestOpportunity(candidates, neededSet, maxPos, opts) {
 
 function bandText(band) {
   return band.lo === band.hi
-    ? fmtTime(band.median)
-    : `${fmtTime(band.lo)}\u2013${fmtTime(band.hi)}`;
+    ? fmtTarget(band.median)
+    : `${fmtTarget(band.lo)}\u2013${fmtTarget(band.hi)}`;
 }
 
 function volHtml(band) {
   const vLabel = VOLATILITY_LABEL[band.volatility] || band.volatility;
   const vClass = ["low", "medium", "high"].includes(band.volatility)
     ? band.volatility : "unknown";
-  const swing = band.iqr != null && band.iqr > 0 ? ` \u00b1${fmtTime(band.iqr)}` : "";
+  const swing = band.iqr != null && band.iqr > 0 ? ` \u00b1${fmtTarget(band.iqr)}` : "";
   return `<span class="vol vol-${vClass}">${vLabel}${swing}</span>`;
 }
 
@@ -1071,7 +1103,7 @@ function renderBestBetSummary(body, bets, { paceMin, paceMax }) {
   let html =
     `<div class="bestbet-title">Your best bet${bets.length > 1 ? "s" : ""}</div>` +
     `<div class="bestbet-headline">` +
-      `Aim for <strong>${fmtTime(top.band.median)}</strong> ` +
+      `Aim for <strong>${fmtTarget(top.band.median)}</strong> ` +
       `to finish around <strong>${top.pos}</strong> ` +
       `and tick <span class="pill">${pad2(top.n)}</span>` +
     `</div>` +
@@ -1089,7 +1121,7 @@ function renderBestBetSummary(body, bets, { paceMin, paceMax }) {
       html +=
         `<li>` +
           `<span class="bb-pill pill">${pad2(b.n)}</span>` +
-          `<span class="bb-time">${fmtTime(b.band.median)}</span>` +
+          `<span class="bb-time">${fmtTarget(b.band.median)}</span>` +
           `<span class="bb-pos">~${b.pos}</span>` +
           `<span class="bb-range">${bandText(b.band)}</span>` +
           volHtml(b.band) +
@@ -1144,7 +1176,7 @@ function renderOpportunity(body, opp) {
   card.innerHTML =
     `<div class="opp-title">Best chance of ticking something</div>` +
     `<div class="opp-headline">` +
-      `Aim for <strong>${fmtTime(opp.band.median)}</strong> ` +
+      `Aim for <strong>${fmtTarget(opp.band.median)}</strong> ` +
       `(finish ~${slo}\u2013${shi})` +
     `</div>` +
     `<div class="opp-detail">` +
@@ -1238,7 +1270,7 @@ function renderWeatherBanner(body, weather) {
     const egShift = weatherSecondsForPosition(si, 100);
     note.textContent =
       `${si.reasons.join(" & ")} tends to thin the field from the back here, so `
-      + `deeper targets ease more \u2014 about +${fmtTime(egShift)} at ~100th, `
+      + `deeper targets ease more \u2014 about +${fmtTarget(egShift)} at ~100th, `
       + `more further back.`;
   } else {
     banner.classList.add("weather-muted");
@@ -1277,6 +1309,25 @@ function wireControls() {
   document.getElementById("pace-max").addEventListener("change", saveState);
 
   document.getElementById("reset-saved").addEventListener("click", resetSaved);
+
+  // Time / Pace-per-km toggle. Switches the display unit and re-renders the
+  // results (and persists the choice like the other setup options).
+  const unitTime = document.getElementById("unit-time");
+  const unitPace = document.getElementById("unit-pace");
+  const setUnit = (unit) => {
+    if (state.unit === unit) return;
+    state.unit = unit;
+    const paceActive = unit === "pace";
+    unitPace.classList.toggle("is-active", paceActive);
+    unitTime.classList.toggle("is-active", !paceActive);
+    unitPace.setAttribute("aria-pressed", String(paceActive));
+    unitTime.setAttribute("aria-pressed", String(!paceActive));
+    saveState();
+    // Re-render only if results are already showing.
+    if (!document.getElementById("results").hidden) predict();
+  };
+  unitTime.addEventListener("click", () => setUnit("time"));
+  unitPace.addEventListener("click", () => setUnit("pace"));
 
   // Info overlay. Visibility is driven by the .open class (see CSS) so it floats
   // above the app rather than pushing content down.

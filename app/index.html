@@ -158,7 +158,15 @@
     </section>
 
     <section id="results" class="panel results" hidden>
-      <h2 id="results-title">Target times</h2>
+      <div class="results-head">
+        <div class="unit-toggle" role="group" aria-label="Show targets as time or pace">
+          <button id="unit-time" type="button" class="unit-btn is-active"
+                  aria-pressed="true">Time</button>
+          <button id="unit-pace" type="button" class="unit-btn"
+                  aria-pressed="false">Pace /km</button>
+        </div>
+        <h2 id="results-title">Target times</h2>
+      </div>
       <div id="results-body"></div>
     </section>
   </main>

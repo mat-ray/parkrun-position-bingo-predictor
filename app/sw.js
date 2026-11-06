@@ -1,6 +1,6 @@
 // Service worker — caches the app shell so the installed PWA works offline.
 // Bump CACHE_VERSION whenever the app files change so clients fetch fresh copies.
-const CACHE_VERSION = "pbp-v8";
+const CACHE_VERSION = "pbp-v9";
 const ASSETS = [
   "./",
   "./index.html",

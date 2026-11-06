@@ -130,6 +130,32 @@ main, .app-header, .app-footer {
 }
 .panel h2 { font-size: 1.05rem; margin: 0 0 8px; }
 
+/* Results header: unit toggle on its own line, right-aligned, above the title. */
+.results-head { margin: 0 0 8px; }
+.results-head #results-title { margin: 0; }
+.unit-toggle {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0;
+  margin: 0 0 6px;
+}
+.unit-btn {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  border: 1px solid var(--line);
+  cursor: pointer;
+}
+.unit-btn:first-child { border-radius: 8px 0 0 8px; }
+.unit-btn:last-child { border-radius: 0 8px 8px 0; border-left: 0; }
+.unit-btn.is-active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
 .hint, .meta { color: var(--ink-dim); font-size: 0.85rem; }
 #event-meta.sparse { color: var(--accent); }
 .hint { margin: 0 0 12px; }

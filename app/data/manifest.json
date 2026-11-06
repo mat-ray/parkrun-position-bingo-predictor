@@ -87,12 +87,12 @@
     {
       "slug": "worthing",
       "name": "Worthing",
-      "event_count": 1,
+      "event_count": 27,
       "date_range": [
-        "2026-10-31",
+        "2025-12-27",
         "2026-10-31"
       ],
-      "max_position": 618,
+      "max_position": 761,
       "lat": 50.81031,
       "lon": -0.3645
     }
