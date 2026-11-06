@@ -280,6 +280,78 @@ def build_odds_curve(events: list[dict]) -> dict:
     return {str(k): p_for_k(k) for k in range(1, 100)}
 
 
+def _monotonic_positions(positions: dict) -> None:
+    """Mutate `positions` so every stored time is non-decreasing as the finishing
+    position increases (isotonic projection via cumulative max).
+
+    Applied independently to each quantile so their ordering within a position
+    is preserved. Covers the all-time `stats` (min/p25/p50/p75/max; iqr/spread
+    are recomputed to stay consistent) and every ISO-week `seasonal` band
+    [n, p25, p50, p75], each week smoothed over its own ascending position
+    series. Volatility ratings and sample counts are left untouched — we're
+    re-ordering times across positions, not reshaping a position's distribution.
+    """
+    pos_nums = sorted(int(p) for p in positions)
+
+    # All-time stats: one running max per key, sweeping low->high position.
+    running = {}
+    for p in pos_nums:
+        st = positions[str(p)].get("stats")
+        if not st:
+            continue
+        for key in ("min", "p25", "p50", "p75", "max"):
+            if key not in st:
+                continue
+            prev = running.get(key)
+            if prev is not None and st[key] < prev:
+                st[key] = prev
+            running[key] = st[key]
+        # A raised lower quantile could now exceed a higher one within this
+        # position; restore the within-position ordering min<=p25<=p50<=p75<=max
+        # (and carry any bump forward so the running maxima stay consistent).
+        order = ("min", "p25", "p50", "p75", "max")
+        for a, b in zip(order, order[1:]):
+            if a in st and b in st and st[b] < st[a]:
+                st[b] = st[a]
+                running[b] = st[b]
+        # Keep derived fields coherent with the (possibly raised) quantiles.
+        if "p25" in st and "p75" in st:
+            st["iqr"] = st["p75"] - st["p25"]
+        if "min" in st and "max" in st:
+            st["spread"] = st["max"] - st["min"]
+
+    # Seasonal bands: smooth each ISO week over its own ascending positions.
+    # Gather the set of weeks present anywhere, then for each week sweep the
+    # positions that have an entry for it.
+    weeks = set()
+    for p in pos_nums:
+        weeks.update(positions[str(p)].get("seasonal", {}).keys())
+    for wk in weeks:
+        run_p25 = run_p50 = run_p75 = None
+        for p in pos_nums:
+            band = positions[str(p)].get("seasonal", {}).get(wk)
+            if band is None:
+                continue
+            # band == [n, p25, p50, p75]
+            if run_p25 is not None and band[1] < run_p25:
+                band[1] = run_p25
+            run_p25 = band[1]
+            if run_p50 is not None and band[2] < run_p50:
+                band[2] = run_p50
+            run_p50 = band[2]
+            if run_p75 is not None and band[3] < run_p75:
+                band[3] = run_p75
+            run_p75 = band[3]
+            # A raised p25 could now exceed p50/p75 within this position; keep
+            # the within-position ordering p25 <= p50 <= p75.
+            if band[2] < band[1]:
+                band[2] = band[1]
+                run_p50 = band[2]
+            if band[3] < band[2]:
+                band[3] = band[2]
+                run_p75 = band[3]
+
+
 def aggregate(raw: dict, root: Path | None = None) -> dict:
     slug = raw["slug"]
     events = raw["events"]
@@ -331,6 +403,25 @@ def aggregate(raw: dict, root: Path | None = None) -> dict:
             "stats": position_stats(times_all),
             "seasonal": seasonal,
         }
+
+    # --- Enforce monotonicity across position --------------------------------
+    # Physically, finish time cannot DECREASE as the finishing position grows
+    # (someone further back was beaten by more runners), so the time->position
+    # curve is non-decreasing. But each position's band is estimated
+    # independently from a small, noisy sample, so adjacent positions can invert
+    # by a few seconds purely by chance (e.g. 113th reading a hair faster than
+    # 111th). That's confusing in the UI and makes the opportunity/odds maths
+    # (which read these medians) slightly incoherent.
+    #
+    # We fix it with an isotonic projection: a left-to-right cumulative maximum
+    # over increasing position, applied independently to each quantile. This
+    # only ever RAISES a value to meet the one before it (never lowers), which
+    # is the correct direction — it removes "faster to finish further back"
+    # artifacts while keeping every number a real observed quantile elsewhere on
+    # the curve. Applied to the all-time band (p25/p50/p75 + min/max) and to
+    # each ISO-week seasonal band, each week smoothed over its own position
+    # series so a sparse week can't distort a dense one.
+    _monotonic_positions(positions)
 
     field_size = {
         str(wk): {
