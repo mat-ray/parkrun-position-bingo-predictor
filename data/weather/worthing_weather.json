@@ -2,13 +2,993 @@
   "slug": "worthing",
   "events": [
     {
-      "event_number": 434,
-      "date": "2026-10-24",
-      "field_size": 495,
+      "event_number": 319,
+      "date": "2024-03-16",
+      "field_size": 585,
+      "weather": {
+        "temp_c": 8.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 2.6
+      }
+    },
+    {
+      "event_number": 320,
+      "date": "2024-03-23",
+      "field_size": 637,
+      "weather": {
+        "temp_c": 7.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 28.1
+      }
+    },
+    {
+      "event_number": 321,
+      "date": "2024-03-30",
+      "field_size": 686,
+      "weather": {
+        "temp_c": 10.2,
+        "precip_mm": 0.1,
+        "wind_kmh": 8.5
+      }
+    },
+    {
+      "event_number": 322,
+      "date": "2024-04-06",
+      "field_size": 572,
+      "weather": {
+        "temp_c": 15.7,
+        "precip_mm": 0.0,
+        "wind_kmh": 26.0
+      }
+    },
+    {
+      "event_number": 323,
+      "date": "2024-04-13",
+      "field_size": 699,
+      "weather": {
+        "temp_c": 13.5,
+        "precip_mm": 0.0,
+        "wind_kmh": 19.3
+      }
+    },
+    {
+      "event_number": 324,
+      "date": "2024-04-20",
+      "field_size": 662,
+      "weather": {
+        "temp_c": 8.1,
+        "precip_mm": 0.0,
+        "wind_kmh": 23.8
+      }
+    },
+    {
+      "event_number": 326,
+      "date": "2024-05-04",
+      "field_size": 621,
+      "weather": {
+        "temp_c": 12.7,
+        "precip_mm": 0.1,
+        "wind_kmh": 12.9
+      }
+    },
+    {
+      "event_number": 327,
+      "date": "2024-05-11",
+      "field_size": 602,
+      "weather": {
+        "temp_c": 18.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 12.9
+      }
+    },
+    {
+      "event_number": 328,
+      "date": "2024-05-18",
+      "field_size": 577,
+      "weather": {
+        "temp_c": 13.9,
+        "precip_mm": 0.7,
+        "wind_kmh": 6.5
+      }
+    },
+    {
+      "event_number": 329,
+      "date": "2024-05-25",
+      "field_size": 594,
+      "weather": {
+        "temp_c": 15.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 7.9
+      }
+    },
+    {
+      "event_number": 330,
+      "date": "2024-06-01",
+      "field_size": 670,
+      "weather": {
+        "temp_c": 13.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 23.4
+      }
+    },
+    {
+      "event_number": 331,
+      "date": "2024-06-08",
+      "field_size": 544,
+      "weather": {
+        "temp_c": 15.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 18.1
+      }
+    },
+    {
+      "event_number": 333,
+      "date": "2024-06-22",
+      "field_size": 634,
+      "weather": {
+        "temp_c": 17.2,
+        "precip_mm": 0.3,
+        "wind_kmh": 12.9
+      }
+    },
+    {
+      "event_number": 334,
+      "date": "2024-06-29",
+      "field_size": 606,
+      "weather": {
+        "temp_c": 17.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 1.5
+      }
+    },
+    {
+      "event_number": 335,
+      "date": "2024-07-06",
+      "field_size": 476,
+      "weather": {
+        "temp_c": 14.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 34.2
+      }
+    },
+    {
+      "event_number": 336,
+      "date": "2024-07-13",
+      "field_size": 701,
+      "weather": {
+        "temp_c": 16.5,
+        "precip_mm": 0.1,
+        "wind_kmh": 7.9
+      }
+    },
+    {
+      "event_number": 337,
+      "date": "2024-07-20",
+      "field_size": 613,
+      "weather": {
+        "temp_c": 19.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 16.2
+      }
+    },
+    {
+      "event_number": 338,
+      "date": "2024-08-10",
+      "field_size": 734,
+      "weather": {
+        "temp_c": 19.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 24.0
+      }
+    },
+    {
+      "event_number": 340,
+      "date": "2024-08-31",
+      "field_size": 536,
+      "weather": {
+        "temp_c": 18.1,
+        "precip_mm": 0.0,
+        "wind_kmh": 22.9
+      }
+    },
+    {
+      "event_number": 341,
+      "date": "2024-09-07",
+      "field_size": 586,
+      "weather": {
+        "temp_c": 17.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 7.6
+      }
+    },
+    {
+      "event_number": 342,
+      "date": "2024-09-14",
+      "field_size": 588,
+      "weather": {
+        "temp_c": 14.6,
+        "precip_mm": 0.0,
+        "wind_kmh": 4.2
+      }
+    },
+    {
+      "event_number": 343,
+      "date": "2024-09-21",
+      "field_size": 534,
+      "weather": {
+        "temp_c": 19.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 12.4
+      }
+    },
+    {
+      "event_number": 344,
+      "date": "2024-09-28",
+      "field_size": 530,
+      "weather": {
+        "temp_c": 10.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.5
+      }
+    },
+    {
+      "event_number": 345,
+      "date": "2024-10-05",
+      "field_size": 654,
+      "weather": {
+        "temp_c": 14.7,
+        "precip_mm": 0.0,
+        "wind_kmh": 18.1
+      }
+    },
+    {
+      "event_number": 347,
+      "date": "2024-10-19",
+      "field_size": 341,
+      "weather": {
+        "temp_c": 15.0,
+        "precip_mm": 2.3,
+        "wind_kmh": 22.1
+      }
+    },
+    {
+      "event_number": 348,
+      "date": "2024-10-26",
+      "field_size": 600,
+      "weather": {
+        "temp_c": 14.7,
+        "precip_mm": 0.0,
+        "wind_kmh": 3.1
+      }
+    },
+    {
+      "event_number": 349,
+      "date": "2024-11-02",
+      "field_size": 650,
+      "weather": {
+        "temp_c": 12.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.3
+      }
+    },
+    {
+      "event_number": 350,
+      "date": "2024-11-09",
+      "field_size": 635,
+      "weather": {
+        "temp_c": 8.6,
+        "precip_mm": 0.0,
+        "wind_kmh": 8.6
+      }
+    },
+    {
+      "event_number": 351,
+      "date": "2024-11-16",
+      "field_size": 624,
+      "weather": {
+        "temp_c": 8.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.0
+      }
+    },
+    {
+      "event_number": 352,
+      "date": "2024-11-30",
+      "field_size": 529,
+      "weather": {
+        "temp_c": 12.5,
+        "precip_mm": 0.1,
+        "wind_kmh": 18.3
+      }
+    },
+    {
+      "event_number": 353,
+      "date": "2024-12-14",
+      "field_size": 451,
+      "weather": {
+        "temp_c": 5.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 10.5
+      }
+    },
+    {
+      "event_number": 355,
+      "date": "2024-12-28",
+      "field_size": 740,
+      "weather": {
+        "temp_c": 4.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 4.8
+      }
+    },
+    {
+      "event_number": 357,
+      "date": "2025-01-11",
+      "field_size": 635,
+      "weather": {
+        "temp_c": -1.5,
+        "precip_mm": 0.0,
+        "wind_kmh": 9.5
+      }
+    },
+    {
+      "event_number": 358,
+      "date": "2025-01-18",
+      "field_size": 647,
+      "weather": {
+        "temp_c": 3.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 9.4
+      }
+    },
+    {
+      "event_number": 359,
+      "date": "2025-01-25",
+      "field_size": 645,
+      "weather": {
+        "temp_c": 4.1,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.4
+      }
+    },
+    {
+      "event_number": 360,
+      "date": "2025-02-01",
+      "field_size": 659,
+      "weather": {
+        "temp_c": 6.6,
+        "precip_mm": 0.0,
+        "wind_kmh": 13.0
+      }
+    },
+    {
+      "event_number": 361,
+      "date": "2025-02-08",
+      "field_size": 536,
+      "weather": {
+        "temp_c": 4.9,
+        "precip_mm": 0.2,
+        "wind_kmh": 16.6
+      }
+    },
+    {
+      "event_number": 362,
+      "date": "2025-02-22",
+      "field_size": 587,
+      "weather": {
+        "temp_c": 9.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 12.6
+      }
+    },
+    {
+      "event_number": 364,
+      "date": "2025-03-08",
+      "field_size": 721,
+      "weather": {
+        "temp_c": 10.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 17.9
+      }
+    },
+    {
+      "event_number": 365,
+      "date": "2025-03-15",
+      "field_size": 617,
+      "weather": {
+        "temp_c": 4.6,
+        "precip_mm": 0.0,
+        "wind_kmh": 18.1
+      }
+    },
+    {
+      "event_number": 366,
+      "date": "2025-03-22",
+      "field_size": 579,
+      "weather": {
+        "temp_c": 11.7,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.6
+      }
+    },
+    {
+      "event_number": 367,
+      "date": "2025-03-29",
+      "field_size": 723,
+      "weather": {
+        "temp_c": 7.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 7.2
+      }
+    },
+    {
+      "event_number": 368,
+      "date": "2025-04-05",
+      "field_size": 669,
+      "weather": {
+        "temp_c": 11.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 23.2
+      }
+    },
+    {
+      "event_number": 369,
+      "date": "2025-04-12",
+      "field_size": 717,
+      "weather": {
+        "temp_c": 13.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 16.2
+      }
+    },
+    {
+      "event_number": 371,
+      "date": "2025-04-26",
+      "field_size": 730,
+      "weather": {
+        "temp_c": 13.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 13.1
+      }
+    },
+    {
+      "event_number": 372,
+      "date": "2025-05-03",
+      "field_size": 700,
+      "weather": {
+        "temp_c": 15.1,
+        "precip_mm": 0.1,
+        "wind_kmh": 6.9
+      }
+    },
+    {
+      "event_number": 373,
+      "date": "2025-05-10",
+      "field_size": 664,
+      "weather": {
+        "temp_c": 15.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 15.2
+      }
+    },
+    {
+      "event_number": 374,
+      "date": "2025-05-17",
+      "field_size": 710,
+      "weather": {
+        "temp_c": 12.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 18.0
+      }
+    },
+    {
+      "event_number": 375,
+      "date": "2025-05-24",
+      "field_size": 578,
+      "weather": {
+        "temp_c": 16.0,
+        "precip_mm": 0.1,
+        "wind_kmh": 28.8
+      }
+    },
+    {
+      "event_number": 376,
+      "date": "2025-05-31",
+      "field_size": 699,
+      "weather": {
+        "temp_c": 17.5,
+        "precip_mm": 0.0,
+        "wind_kmh": 6.7
+      }
+    },
+    {
+      "event_number": 378,
+      "date": "2025-06-14",
+      "field_size": 676,
+      "weather": {
+        "temp_c": 17.7,
+        "precip_mm": 0.0,
+        "wind_kmh": 26.6
+      }
+    },
+    {
+      "event_number": 379,
+      "date": "2025-06-21",
+      "field_size": 581,
+      "weather": {
+        "temp_c": 21.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 15.5
+      }
+    },
+    {
+      "event_number": 380,
+      "date": "2025-06-28",
+      "field_size": 719,
+      "weather": {
+        "temp_c": 19.7,
+        "precip_mm": 0.0,
+        "wind_kmh": 20.8
+      }
+    },
+    {
+      "event_number": 381,
+      "date": "2025-07-05",
+      "field_size": 640,
+      "weather": {
+        "temp_c": 19.0,
+        "precip_mm": 0.1,
+        "wind_kmh": 29.2
+      }
+    },
+    {
+      "event_number": 382,
+      "date": "2025-07-12",
+      "field_size": 684,
+      "weather": {
+        "temp_c": 22.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 5.6
+      }
+    },
+    {
+      "event_number": 383,
+      "date": "2025-07-19",
+      "field_size": 408,
+      "weather": {
+        "temp_c": 18.5,
+        "precip_mm": 0.7,
+        "wind_kmh": 4.0
+      }
+    },
+    {
+      "event_number": 385,
+      "date": "2025-08-16",
+      "field_size": 714,
+      "weather": {
+        "temp_c": 19.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 19.7
+      }
+    },
+    {
+      "event_number": 386,
+      "date": "2025-08-30",
+      "field_size": 599,
+      "weather": {
+        "temp_c": 18.2,
+        "precip_mm": 0.1,
+        "wind_kmh": 23.0
+      }
+    },
+    {
+      "event_number": 387,
+      "date": "2025-09-06",
+      "field_size": 642,
+      "weather": {
+        "temp_c": 18.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 20.1
+      }
+    },
+    {
+      "event_number": 388,
+      "date": "2025-09-13",
+      "field_size": 358,
+      "weather": {
+        "temp_c": 14.6,
+        "precip_mm": 0.3,
+        "wind_kmh": 25.0
+      }
+    },
+    {
+      "event_number": 389,
+      "date": "2025-09-20",
+      "field_size": 572,
+      "weather": {
+        "temp_c": 18.1,
+        "precip_mm": 0.0,
+        "wind_kmh": 22.4
+      }
+    },
+    {
+      "event_number": 390,
+      "date": "2025-09-27",
+      "field_size": 621,
+      "weather": {
+        "temp_c": 14.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 20.8
+      }
+    },
+    {
+      "event_number": 392,
+      "date": "2025-10-11",
+      "field_size": 574,
+      "weather": {
+        "temp_c": 14.1,
+        "precip_mm": 0.0,
+        "wind_kmh": 5.8
+      }
+    },
+    {
+      "event_number": 393,
+      "date": "2025-10-18",
+      "field_size": 505,
+      "weather": {
+        "temp_c": 14.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 24.0
+      }
+    },
+    {
+      "event_number": 394,
+      "date": "2025-10-25",
+      "field_size": 622,
+      "weather": {
+        "temp_c": 9.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 15.6
+      }
+    },
+    {
+      "event_number": 395,
+      "date": "2025-11-01",
+      "field_size": 534,
+      "weather": {
+        "temp_c": 13.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 30.5
+      }
+    },
+    {
+      "event_number": 396,
+      "date": "2025-11-08",
+      "field_size": 673,
+      "weather": {
+        "temp_c": 10.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 9.7
+      }
+    },
+    {
+      "event_number": 397,
+      "date": "2025-11-15",
+      "field_size": 637,
+      "weather": {
+        "temp_c": 11.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 6.2
+      }
+    },
+    {
+      "event_number": 399,
+      "date": "2025-11-29",
+      "field_size": 416,
+      "weather": {
+        "temp_c": 11.4,
+        "precip_mm": 0.1,
+        "wind_kmh": 38.5
+      }
+    },
+    {
+      "event_number": 400,
+      "date": "2025-12-06",
+      "field_size": 437,
+      "weather": {
+        "temp_c": 10.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 32.5
+      }
+    },
+    {
+      "event_number": 401,
+      "date": "2025-12-13",
+      "field_size": 551,
+      "weather": {
+        "temp_c": 3.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 1.0
+      }
+    },
+    {
+      "event_number": 402,
+      "date": "2025-12-20",
+      "field_size": 702,
+      "weather": {
+        "temp_c": 8.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 15.9
+      }
+    },
+    {
+      "event_number": 403,
+      "date": "2025-12-25",
+      "field_size": 769,
+      "weather": {
+        "temp_c": 3.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 31.3
+      }
+    },
+    {
+      "event_number": 404,
+      "date": "2025-12-27",
+      "field_size": 591,
+      "weather": {
+        "temp_c": 4.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 23.8
+      }
+    },
+    {
+      "event_number": 406,
+      "date": "2026-01-10",
+      "field_size": 678,
+      "weather": {
+        "temp_c": 0.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 19.3
+      }
+    },
+    {
+      "event_number": 407,
+      "date": "2026-01-17",
+      "field_size": 761,
+      "weather": {
+        "temp_c": 8.2,
+        "precip_mm": 0.1,
+        "wind_kmh": 16.5
+      }
+    },
+    {
+      "event_number": 408,
+      "date": "2026-01-24",
+      "field_size": 671,
+      "weather": {
+        "temp_c": 7.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 31.4
+      }
+    },
+    {
+      "event_number": 409,
+      "date": "2026-01-31",
+      "field_size": 628,
+      "weather": {
+        "temp_c": 7.9,
+        "precip_mm": 0.1,
+        "wind_kmh": 17.5
+      }
+    },
+    {
+      "event_number": 410,
+      "date": "2026-02-07",
+      "field_size": 481,
+      "weather": {
+        "temp_c": 8.5,
+        "precip_mm": 0.6,
+        "wind_kmh": 34.8
+      }
+    },
+    {
+      "event_number": 411,
+      "date": "2026-02-14",
+      "field_size": 688,
+      "weather": {
+        "temp_c": 2.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 17.7
+      }
+    },
+    {
+      "event_number": 413,
+      "date": "2026-02-28",
+      "field_size": 588,
+      "weather": {
+        "temp_c": 8.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 26.7
+      }
+    },
+    {
+      "event_number": 414,
+      "date": "2026-03-07",
+      "field_size": 618,
+      "weather": {
+        "temp_c": 9.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 12.8
+      }
+    },
+    {
+      "event_number": 415,
+      "date": "2026-03-14",
+      "field_size": 716,
+      "weather": {
+        "temp_c": 5.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.3
+      }
+    },
+    {
+      "event_number": 416,
+      "date": "2026-03-21",
+      "field_size": 606,
+      "weather": {
+        "temp_c": 7.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 12.7
+      }
+    },
+    {
+      "event_number": 417,
+      "date": "2026-03-28",
+      "field_size": 628,
+      "weather": {
+        "temp_c": 7.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 18.4
+      }
+    },
+    {
+      "event_number": 418,
+      "date": "2026-04-04",
+      "field_size": 687,
+      "weather": {
+        "temp_c": 11.1,
+        "precip_mm": 0.1,
+        "wind_kmh": 24.9
+      }
+    },
+    {
+      "event_number": 420,
+      "date": "2026-04-18",
+      "field_size": 705,
       "weather": {
         "temp_c": 12.1,
         "precip_mm": 0.0,
-        "wind_kmh": 17.7
+        "wind_kmh": 8.3
+      }
+    },
+    {
+      "event_number": 421,
+      "date": "2026-04-25",
+      "field_size": 734,
+      "weather": {
+        "temp_c": 11.1,
+        "precip_mm": 0.0,
+        "wind_kmh": 5.1
+      }
+    },
+    {
+      "event_number": 422,
+      "date": "2026-05-02",
+      "field_size": 642,
+      "weather": {
+        "temp_c": 14.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 4.8
+      }
+    },
+    {
+      "event_number": 423,
+      "date": "2026-05-09",
+      "field_size": 683,
+      "weather": {
+        "temp_c": 17.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 12.9
+      }
+    },
+    {
+      "event_number": 424,
+      "date": "2026-05-16",
+      "field_size": 735,
+      "weather": {
+        "temp_c": 11.4,
+        "precip_mm": 0.0,
+        "wind_kmh": 13.4
+      }
+    },
+    {
+      "event_number": 425,
+      "date": "2026-05-30",
+      "field_size": 685,
+      "weather": {
+        "temp_c": 21.6,
+        "precip_mm": 0.0,
+        "wind_kmh": 5.4
+      }
+    },
+    {
+      "event_number": 426,
+      "date": "2026-06-06",
+      "field_size": 328,
+      "weather": {
+        "temp_c": 13.9,
+        "precip_mm": 0.5,
+        "wind_kmh": 28.2
+      }
+    },
+    {
+      "event_number": 428,
+      "date": "2026-06-20",
+      "field_size": 633,
+      "weather": {
+        "temp_c": 18.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 13.3
+      }
+    },
+    {
+      "event_number": 429,
+      "date": "2026-08-08",
+      "field_size": 685,
+      "weather": {
+        "temp_c": 21.0,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.0
+      }
+    },
+    {
+      "event_number": 430,
+      "date": "2026-08-15",
+      "field_size": 659,
+      "weather": {
+        "temp_c": 24.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 18.4
+      }
+    },
+    {
+      "event_number": 431,
+      "date": "2026-08-22",
+      "field_size": 613,
+      "weather": {
+        "temp_c": 16.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 14.3
+      }
+    },
+    {
+      "event_number": 432,
+      "date": "2026-09-05",
+      "field_size": 603,
+      "weather": {
+        "temp_c": 17.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 12.5
+      }
+    },
+    {
+      "event_number": 433,
+      "date": "2026-09-12",
+      "field_size": 653,
+      "weather": {
+        "temp_c": 17.9,
+        "precip_mm": 0.0,
+        "wind_kmh": 22.6
       }
     },
     {
