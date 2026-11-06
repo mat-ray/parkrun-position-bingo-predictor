@@ -454,15 +454,16 @@ button:active { transform: translateY(1px); }
   .bestbet-list .bb-range { display: none; }
 }
 
-.odds-card {
+/* The chance line now lives INSIDE a strategy card (best-numbers / opportunity),
+   separated from the content above it by a hairline, so the % is unambiguously
+   attached to that card's strategy. */
+.odds-line {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 0 0 16px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
 }
 .odds-big {
   font-size: 1.8rem;

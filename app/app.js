@@ -838,8 +838,7 @@ async function predict({ scroll = true } = {}) {
   // Top few best bets at the very top, then the seasonal context banner.
   const topBets = rankBestBets(allCandidates, paceMin, paceMax, 3);
   const bestOpp = pickBestOpportunity(allCandidates, state.needed, maxPos, opts);
-  renderBestBetSummary(body, topBets, { paceMin, paceMax });
-  renderOdds(body, state.needed.size);
+  renderBestBetSummary(body, topBets, { paceMin, paceMax, neededCount: state.needed.size });
   renderOpportunity(body, bestOpp);
   renderSeasonBanner(body, useSeason, targetDate);
   renderWeatherBanner(body, weather);
@@ -1079,8 +1078,21 @@ function volHtml(band) {
   return `<span class="vol vol-${vClass}">${vLabel}${swing}</span>`;
 }
 
-// Render the "best bets" summary card (top few targets) above the detail list.
-function renderBestBetSummary(body, bets, { paceMin, paceMax }) {
+// Odds line (shared look across both strategy cards): a big % + label, so the
+// two sections present their chances consistently. `label` describes what the
+// % means; `subTxt` is optional small print underneath.
+function oddsLineHtml(pct, label, subTxt) {
+  return `<div class="odds-line">`
+    + `<span class="odds-big">${pct}%</span>`
+    + `<span class="odds-text">${label}`
+    + (subTxt ? `<span class="odds-sub">${subTxt}</span>` : "")
+    + `</span></div>`;
+}
+
+// Render the "best bingo numbers" summary card (top few single-number targets)
+// above the detail list. Includes this strategy's own hit-chance (odds_by_k) so
+// the % clearly belongs here rather than floating between sections.
+function renderBestBetSummary(body, bets, { paceMin, paceMax, neededCount }) {
   const card = document.createElement("div");
   card.className = "bestbet-card";
 
@@ -1088,7 +1100,7 @@ function renderBestBetSummary(body, bets, { paceMin, paceMax }) {
     card.classList.add("bestbet-empty");
     const hasPace = paceMin != null || paceMax != null;
     card.innerHTML =
-      `<div class="bestbet-title">No clear best bet</div>` +
+      `<div class="bestbet-title">No clear best number</div>` +
       `<div class="bestbet-detail">` +
       (hasPace
         ? "Nothing matched your pace range. Try widening the fastest/slowest times."
@@ -1101,7 +1113,7 @@ function renderBestBetSummary(body, bets, { paceMin, paceMax }) {
   // Headline: the single best.
   const top = bets[0];
   let html =
-    `<div class="bestbet-title">Your best bet${bets.length > 1 ? "s" : ""}</div>` +
+    `<div class="bestbet-title">Your best bingo numbers</div>` +
     `<div class="bestbet-headline">` +
       `Aim for <strong>${fmtTarget(top.band.median)}</strong> ` +
       `to finish around <strong>${top.pos}</strong> ` +
@@ -1130,35 +1142,47 @@ function renderBestBetSummary(body, bets, { paceMin, paceMax }) {
     html += `</ol>`;
   }
 
+  // This strategy's hit-chance, rendered inside the card so the % is clearly
+  // attached to "aim at the best target" (not floating between sections).
+  const curve = state.event.odds_by_k;
+  const aimed = curve ? curve[String(neededCount)] : null;
+  if (aimed != null && aimed > 0) {
+    const baseline = neededCount / 100;
+    const pctOf = (x) => Math.round(x * 100);
+    const lift = baseline > 0 ? aimed / baseline : 0;
+    const liftTxt = lift >= 1.15
+      ? ` \u2014 about ${lift.toFixed(1)}\u00d7 better than just turning up` : "";
+    html += oddsLineHtml(
+      pctOf(aimed),
+      `estimated chance of ticking one of your ${neededCount} `
+        + `number${neededCount === 1 ? "" : "s"} this week aiming at this target`,
+      `vs ~${pctOf(baseline)}% just turning up${liftTxt}`
+    );
+  }
+
   card.innerHTML = html;
   body.appendChild(card);
 }
 
-// Render an honest estimate of this week's odds: the chance of ticking a needed
-// number if you aim at the best target, vs just turning up (baseline ~k/100).
-// The aimed figure comes from a build-time simulation over the event's real
-// history (odds_by_k), which captures genuine week-to-week scatter.
-function renderOdds(body, neededCount) {
-  const curve = state.event.odds_by_k;
-  if (!curve) return;
-  const aimed = curve[String(neededCount)];
-  if (aimed == null || aimed <= 0) return;
+// Estimate the cluster-aim hit chance by combining the two stats we already
+// have, rather than shipping raw curves or baking a new simulation:
+//   * p1  = the Monte-Carlo chance of ticking ONE specific aimed number
+//           (odds_by_k["1"]) — a real, measured per-cell hit probability.
+//   * m   = how many of your needed numbers fall within the cluster aim's
+//           plausible finishing spread (opp.sc.coveredCells.size).
+// Aiming at a cluster gives you ~m shots instead of one, so the chance of
+// ticking at least one is the complement of missing all m:
+//     p = 1 - (1 - p1)^(m * DAMP)
+// DAMP (<1) acknowledges that adjacent finishes are correlated (if you drift
+// slow you drift slow for all of them), so the m shots aren't fully
+// independent — without it the estimate is too rosy. It's an ESTIMATE built
+// from two numbers that weren't designed to be combined; good enough here.
+const CLUSTER_INDEP_DAMP = 0.8;
 
-  const baseline = neededCount / 100;
-  const pct = (x) => `${Math.round(x * 100)}%`;
-  const lift = baseline > 0 ? aimed / baseline : 0;
-  const liftTxt = lift >= 1.15
-    ? ` \u2014 about ${lift.toFixed(1)}\u00d7 better than just turning up` : "";
-
-  const card = document.createElement("div");
-  card.className = "odds-card";
-  card.innerHTML =
-    `<span class="odds-big">${pct(aimed)}</span>`
-    + `<span class="odds-text">estimated chance of ticking one of your `
-    + `${neededCount} number${neededCount === 1 ? "" : "s"} this week if you aim `
-    + `at the best target<span class="odds-sub">vs ~${pct(baseline)} just `
-    + `turning up${liftTxt}</span></span>`;
-  body.appendChild(card);
+function clusterOdds(p1, m) {
+  if (p1 == null || p1 <= 0 || m <= 0) return null;
+  const p = 1 - Math.pow(1 - p1, m * CLUSTER_INDEP_DAMP);
+  return Math.max(0, Math.min(1, p));
 }
 
 // Render the "best chance of ticking anything" opportunity callout.
@@ -1168,8 +1192,16 @@ function renderOpportunity(body, opp) {
   if (!opp || opp.sc.coveredCells.size < 2) return;
 
   const cells = Array.from(opp.sc.coveredCells).sort((a, b) => a - b).map(pad2);
-  const pct = Math.round(opp.sc.prob * 100);
   const [slo, shi] = opp.sc.spread;
+  const m = opp.sc.coveredCells.size;
+
+  // Derive the cluster chance from the single-number Monte-Carlo base + how
+  // many needed cells this aim covers. Fall back to the raw band-fraction only
+  // if we have no odds curve to anchor to.
+  const curve = state.event.odds_by_k;
+  const p1 = curve ? curve["1"] : null;
+  const est = clusterOdds(p1, m);
+  const pct = est != null ? Math.round(est * 100) : Math.round(opp.sc.prob * 100);
 
   const card = document.createElement("div");
   card.className = "opp-card";
@@ -1180,9 +1212,13 @@ function renderOpportunity(body, opp) {
       `(finish ~${slo}\u2013${shi})` +
     `</div>` +
     `<div class="opp-detail">` +
-      `Could tick ${cells.map((c) => `<span class="pill">${c}</span>`).join(" ")} ` +
-      `\u2014 about ${pct}% of likely finishes here land on one of your numbers.` +
-    `</div>`;
+      `Could tick ${cells.map((c) => `<span class="pill">${c}</span>`).join(" ")}` +
+    `</div>` +
+    oddsLineHtml(
+      pct,
+      `estimated chance this run ticks at least one of your numbers`,
+      `aiming where ${m} of your numbers cluster together`
+    );
   body.appendChild(card);
 }
 
