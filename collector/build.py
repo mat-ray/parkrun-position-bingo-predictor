@@ -137,7 +137,44 @@ def main() -> int:
           f"— open app/index.html directly, no server needed.")
 
     write_standalone()
+
+    # Machine-readable list of MISSING event numbers (saves we don't have yet),
+    # for feeding into a retrieval shortcut. Printed last so it's easy to grab
+    # from the tail of the output. Event numbers are contiguous across
+    # cancellations, so every gap in the number sequence is a results page we
+    # haven't captured — never a cancelled week. Format, one row per event:
+    #     slug;NUM1;NUM2;NUM3
+    # Only events that actually have gaps are listed.
+    report_missing_event_numbers([e["slug"] for e in manifest_events])
     return 0
+
+
+def report_missing_event_numbers(slugs: list[str]) -> None:
+    """Print, per event, the event numbers missing from data/raw/<slug>.json —
+    i.e. saves still to retrieve (gaps are never cancellations). Emits a clearly
+    delimited block of `slug;NUM;NUM;...` lines for scripting."""
+    lines = []
+    for slug in slugs:
+        raw_path = ROOT / "data" / "raw" / f"{slug}.json"
+        try:
+            raw = json.loads(raw_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        numbers = sorted(e["event_number"] for e in raw.get("events", []))
+        if len(numbers) < 2:
+            continue
+        have = set(numbers)
+        missing = [n for n in range(numbers[0], numbers[-1] + 1) if n not in have]
+        if missing:
+            lines.append(slug + ";" + ";".join(str(n) for n in missing))
+
+    print("\n=== MISSING EVENT NUMBERS (saves to retrieve; slug;NUM;NUM;...) ===")
+    if lines:
+        for line in lines:
+            print(line)
+    else:
+        print("(none — every event number in range is present)")
+    print("=== END MISSING EVENT NUMBERS ===")
 
 
 def write_standalone() -> None:
