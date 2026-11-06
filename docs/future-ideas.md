@@ -140,3 +140,86 @@ Possible improvement: on launch, call `registration.update()`, and when a new
 worker is waiting, `skipWaiting()` + reload so updates apply on next launch
 without a manual quit-and-reopen. It's a behaviour change to the update flow, so
 weigh it against the risk of reloading mid-use.
+---
+
+## Garmin / Connect IQ — live predicted finishing position
+
+Garmin watches run **Connect IQ** apps in **Monkey C** (free SDK). Of the app
+types (watch face / data field / widget-glance / device app), the compelling one
+here is a **data field**: it drops into an existing activity screen — e.g. a
+custom "parkrun" Run profile — and shows a live value as you run. The idea:
+
+> As you run, map your projected finish time to a **predicted finishing
+> position** from the event's own history, updating each second. "At this pace
+> you're on for ~92nd."
+
+### Why this is a good fit (and cheaper than it first looks)
+
+- **The hard half is already built.** `aggregate.py` produces a per-position
+  time curve per event, and we made it **monotonic**, so inverting it
+  (projected *time* -> *position*) is clean and unambiguous. The watch doesn't
+  model the field; it just reads a curve the other way.
+- **The watch already provides the live inputs for free.** A data field gets
+  `Activity.Info` each second (elapsed time, distance, current pace). Project
+  the finish honestly as `projected = elapsed + (5000 - dist) * current_pace`
+  (converges as you progress; avg-pace alone is noisy early). Then look up
+  `projected` in the curve -> position.
+- Note the data we have is finish *time* per position (= avg pace over 5 km for
+  that position), **not splits** — so the watch must project *your* finish from
+  *your* run so far; the curve only does the time->position step.
+
+### Event auto-detect from GPS (removes the only friction)
+
+Picking the event by hand on a watch is miserable. Instead: we already store
+each event's start coordinates in `data/locations.json` (for weather). A data
+field can read `Position.getInfo()`, so on activity start it picks the **nearest
+known start** within a few hundred metres. parkrun starts are geographically
+distinct, so this identifies the event with zero input. No fix / not near any
+known start -> show nothing. (parkrun gives you a GPS fix before the off anyway.)
+
+### Optional weather — use if present, never assume
+
+Connect IQ exposes `Toybox.Weather` (e.g. `getCurrentConditions()`), populated
+from the **last phone sync** — so it can be null (never synced, stale, or
+unsupported device/firmware). Design: *attempt it; on null / missing field /
+stale timestamp, silently fall back to the no-weather curve.* If present and
+fresh, feed it into the **per-event wet/windy slopes the pipeline already
+emits** — same model as the phone app, just a different forecast source. Rain
+maps to the binary wet flag (the model treats rain as binary anyway), wind to
+the threshold. A couple of multiplications; negligible cost.
+
+> **Assumptions to verify before building** (stated, not confirmed): the exact
+> `Toybox.Weather` fields available (precip amount vs. condition code; wind
+> units) and which devices/firmware support the API at all. Treat as unknown
+> until checked.
+
+### Architecture (keep the watch dumb)
+
+1. **Pipeline emits a tiny watch bundle** per event: start lat/lon (already
+   have) + a downsampled ~40-point `time -> position` curve (from the existing
+   monotonic medians) + the event's weather slopes (already computed).
+2. **On activity start:** GPS -> nearest event -> select that event's curve.
+3. **Each second:** project finish time -> look up position -> display, with the
+   optional weather nudge if `Toybox.Weather` is available and fresh.
+
+### Constraints / gotchas
+
+- **Memory is the binding limit** on a data field (can be very tight on older
+  devices), not CPU. Hence a *downsampled breakpoint curve* for a handful of
+  events, never raw finisher data or the whole bundle.
+- **Early-run noise:** the projection swings for the first ~1 km — hide or smooth
+  it until distance is meaningful.
+- **One data field ~ one value.** "Predicted position" is the natural headline;
+  showing position *and* projected time needs a field type that allows it.
+- **Per-device rendering/limits** vary — target the specific watch model.
+- No mid-run connectivity needed: everything (curve, coords, slopes) ships baked
+  in; weather, if used, comes from the phone-synced cache, not a live fetch.
+
+### Companion / thin-client note (non-data-field variants)
+
+A glance/widget or device app could show "today's best target" at rest, as a
+**thin client**: fetch a small precomputed answer from the Pages site rather
+than running the model on-device. The bingo *card* (which numbers you need)
+realistically stays on the phone (entering 100 cells on a watch is painful);
+the watch reads the result. Same principle throughout: **server/pipeline does
+the thinking, the device displays the answer.**
