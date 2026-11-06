@@ -60,45 +60,71 @@ offset, or weighting. Treat as research, not a quick add:
 
 ### Auto-reconcile from the next results refresh (removes most data-entry friction)
 
-Key realisation: we don't need the user to *type in* their result. After the
-next `latestresults` refresh the app already has that event's finisher data, so
-it can pull the missing half of the outcome back automatically. The user only
-supplies the one thing the results data can't tell us: **which finisher was
-them.** Three ways to bridge that, with very different privacy costs:
+**The core outcome needs nothing but the runner's position — which they always
+have.** Bingo ticks are a function of *position* alone (108 -> ticks 08), and
+the runner knows their position the moment they see their result. So "did I tick
+the number I was aiming for?" is answered instantly, offline, with no results
+refresh, no lookup, no identity: the user says "I finished 108th", the app
+already knows what they were aiming at, and it reconciles on the spot.
 
-- **A. User enters their POSITION** ("I finished 108th on 2026-11-07"). The app
-  looks up the time recorded at position 108 that week and which needed numbers
-  108 ticked, then reconciles against the aim. Identity-free.
-- **B. User enters their TIME** (which they always know from their watch / result
-  text). The app does the inverse lookup — what position did that time land that
-  week — and reconciles. Also identity-free, and *time* is the number a runner
-  most reliably has to hand.
-- **C. User enters their parkrun ATHLETE ID once**, app finds their row every
-  week automatically. The frictionless dream — but see the hard constraint
-  below.
+Important: the user enters their **actual position (e.g. 108)**, not the mod-100
+bingo cell — the app does `pos % 100` itself. Don't make them pre-mod it:
+
+- The mod is **lossy** — "I got 8" can't distinguish 8th / 108th / 208th, and
+  that difference is exactly the signal the calibration add-on needs (8th and
+  108th are very different times). Keep the full position.
+- For the tick itself, mod is all that matters (108 and 8 both tick 08), but the
+  runner has the full number anyway, so there's no reason to make them compute
+  the mod.
+- Edge case to preserve: `pos % 100 == 0` maps to bingo cell **00** (100, 200…
+  all tick 00), matching the existing `candidatePositions` convention in the
+  app. Use the same `% 100` mapping on reconciliation so 100 never mis-ticks.
+
+Entering a *time* (an earlier draft of this note) is unnecessary for the bingo
+outcome — time doesn't determine the tick, position does, and position is the
+thing the runner has in hand. Time only matters for the *secondary* calibration
+question below.
+
+Where a post-refresh lookup actually earns its keep is **calibration** — a
+different question: "was the app's *time* advice any good?" e.g. "we told you to
+aim 25:50 for ~111th; you ran 25:58 and finished 108th." Answering that needs
+the week's actual position<->time curve, which comes from the next
+`latestresults` refresh. It's a nice-to-have on top of the core, not a
+prerequisite for it.
+
+Identity (matching *which finisher was you* automatically by parkrun athlete ID)
+is a further, optional step — and the one with a real cost; see below.
 
 **Hard constraint / privacy fork (don't cross this by accident):** the collector
 *deliberately strips names and athlete IDs*. A raw finisher record is only
 `{position, time_seconds, gender, age_group}`, and the shipped bundle is purely
 statistical (per-position bands — individual finishers aren't even in it). So:
 
-- A and B work with the data model as-is, except the app would need that
-  specific event+date's actual position->time results available (the raw data
-  has this; the *shipped bundle* currently doesn't — it ships aggregated bands
-  only). Modest, PII-free data change.
-- **C requires the pipeline to START keeping names/IDs** — a reversal of the
-  privacy-preserving design, and on the *public* GitHub Pages host it would mean
+- The **core bingo outcome** needs no data beyond the user's position — fully
+  PII-free and needs no refresh at all.
+- The **calibration add-on** needs that specific event+date's actual
+  position->time results available to the app (the raw data has this; the
+  *shipped bundle* currently doesn't — it ships aggregated bands only). Modest,
+  PII-free data change.
+- **Auto-matching by athlete ID requires the pipeline to START keeping
+  names/IDs** — a reversal of the privacy-preserving design, and on the *public*
+  GitHub Pages host it would mean
   **publishing identifiable per-runner results.** That's a policy decision, not
   a feature toggle. Prefer A or B unless there's a strong reason.
 
 ### Rough first step, when picked up
 
-Ship **Level 1, identity-free (option B: enter your time)**, local, with the app
-auto-reconciling position + ticks after the next refresh, and a single honest
-"your aimed hit-rate" number. This needs the per-event, per-week position->time
-results shipped to the app (or fetched), which is a small, PII-free extension of
-the bundle. Prove this frictionless flow before considering Level 2 (feedback
-into predictions) or option C (identity, with its privacy cost).
+Ship the **core bingo outcome first: "enter your finishing position"**, local
+and identity-free — no refresh, no new data needed. The app already knows what
+you aimed at, so it can say immediately "you ticked 08, which you were aiming
+for" and keep a running "aimed hit-rate". This is the whole value with none of
+the cost.
+
+Only then consider the **calibration add-on** (did the *time* advice land you
+where predicted?), which needs the week's position->time results shipped to the
+app after a refresh — still PII-free, just a small bundle extension. Leave
+auto-matching by athlete ID (with its privacy cost) and Level 2 (feeding
+outcomes back into predictions) for last, if ever.
 
 ---
 
