@@ -1,0 +1,35 @@
+{
+  "slug": "northfarm",
+  "events": [
+    {
+      "event_number": 2,
+      "date": "2026-10-10",
+      "field_size": 259,
+      "weather": {
+        "temp_c": 11.8,
+        "precip_mm": 0.0,
+        "wind_kmh": 19.5
+      }
+    },
+    {
+      "event_number": 3,
+      "date": "2026-10-17",
+      "field_size": 328,
+      "weather": {
+        "temp_c": 9.5,
+        "precip_mm": 0.0,
+        "wind_kmh": 18.6
+      }
+    },
+    {
+      "event_number": 4,
+      "date": "2026-10-31",
+      "field_size": 208,
+      "weather": {
+        "temp_c": 9.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 11.1
+      }
+    }
+  ]
+}

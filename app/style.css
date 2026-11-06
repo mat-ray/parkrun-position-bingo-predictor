@@ -1,0 +1,471 @@
+:root {
+  --bg: #1d1730;
+  --panel: #2b223f;
+  --panel-2: #342a4c;
+  --ink: #f3eefc;
+  --ink-dim: #b7abce;
+  --accent: #ffb020;
+  --accent-ink: #231a0a;
+  --good: #46c98b;
+  --line: #43385e;
+  --radius: 14px;
+  --maxw: 760px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;   /* never allow sideways scroll from an overflowing child */
+}
+
+main, .app-header, .app-footer {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.app-header {
+  padding-top: calc(env(safe-area-inset-top) + 20px);
+  padding-bottom: 8px;
+}
+.app-header { position: relative; }
+.app-header h1 { font-size: 1.6rem; margin: 0 0 4px; }
+/* Tagline is a flex row so the "About" button sits hard right. */
+.tagline {
+  color: var(--ink-dim);
+  margin: 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.about-btn {
+  margin-left: auto;            /* push to the right edge of the tagline */
+  flex: 0 0 auto;
+  padding: 3px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--ink);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* Floating overlay: a fixed, full-viewport layer that covers the app. Driven
+   purely by the [hidden] attribute. !important guards against any later rule
+   accidentally giving it layout flow. */
+.info-overlay[hidden] { display: none !important; }
+.info-overlay {
+  display: flex !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000;
+  background: rgba(10, 8, 18, 0.72);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.info-panel {
+  position: relative;
+  max-width: 560px;
+  width: 100%;
+  max-height: 85vh;              /* panel itself scrolls, not the page */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 20px 16px;
+}
+.info-panel h2 { margin: 0 0 12px; font-size: 1.25rem; padding-right: 36px; }
+.info-panel h3 { margin: 18px 0 6px; font-size: 1rem; color: var(--accent); }
+.info-panel p { margin: 0 0 10px; font-size: 0.9rem; line-height: 1.55; }
+.info-panel ul { margin: 0 0 10px; padding-left: 20px; font-size: 0.9rem; line-height: 1.55; }
+.info-panel li { margin-bottom: 6px; }
+.info-foot { color: var(--ink-dim); font-size: 0.8rem; margin-top: 14px; }
+/* Stays pinned at the panel's top-right while the text scrolls beneath it.
+   The X is drawn with CSS (two rotated bars) so it's always perfectly centred
+   in its circle — no glyph baseline quirks, crisp at any size. */
+.info-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--panel-2);
+  cursor: pointer;
+  margin: -4px -4px 0 0;
+  z-index: 1;
+  font-size: 0;                 /* hide the "×" glyph; we draw our own */
+  color: transparent;
+}
+.info-close::before,
+.info-close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 1px;
+}
+.info-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.info-close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 14px 0;
+}
+.panel h2 { font-size: 1.05rem; margin: 0 0 8px; }
+
+.hint, .meta { color: var(--ink-dim); font-size: 0.85rem; }
+#event-meta.sparse { color: var(--accent); }
+.hint { margin: 0 0 12px; }
+.meta { margin: 6px 0 0; }
+.tiny { font-size: 0.75rem; }
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+label { font-size: 0.8rem; color: var(--ink-dim); }
+
+select, input[type="text"] {
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.pace-row { display: flex; gap: 12px; }
+.pace-row .field { flex: 1; }
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+.checkbox-row input { width: auto; }
+input[type="date"] { color-scheme: dark; }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  padding: 10px 14px;
+  cursor: pointer;
+  background: var(--panel-2);
+  color: var(--ink);
+}
+button.ghost { background: transparent; }
+button.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 700;
+  width: 100%;
+  padding: 14px;
+}
+button:active { transform: translateY(1px); }
+
+.bingo-grid {
+  display: grid;
+  /* minmax(0, 1fr) lets each column shrink below its content's min width, so
+     ten cells always fit the row instead of overflowing on narrow screens. */
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+.bingo-cell {
+  aspect-ratio: 1 / 1;
+  min-width: 0;          /* allow the cell to shrink inside its grid track */
+  padding: 0;            /* reset default button padding that forced overflow */
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  line-height: 1;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  user-select: none;
+}
+.bingo-cell.needed {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+@media (max-width: 420px) {
+  .bingo-cell { font-size: 0.68rem; border-radius: 6px; }
+  .bingo-grid { gap: 3px; }
+  /* Tighter panel padding so ten cells have room on small phones. */
+  .panel { padding: 12px; }
+  main, .app-header, .app-footer { padding-left: 10px; padding-right: 10px; }
+}
+
+.results-item {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  background: var(--panel-2);
+}
+.results-item h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pill {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.target-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px dashed var(--line);
+  font-variant-numeric: tabular-nums;
+}
+.target-row:first-of-type { border-top: none; }
+
+.target-pos { display: flex; flex-direction: column; gap: 2px; }
+.pos-label { color: var(--ink); font-weight: 600; }
+.pos-sub { color: var(--ink-dim); font-size: 0.75rem; }
+.best-bet {
+  display: inline-block;
+  background: var(--good);
+  color: #08311f;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.target-time {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+.target-time .aim { font-weight: 700; font-size: 1.05rem; }
+.target-time .aim-sub { color: var(--good); font-size: 0.78rem; }
+.target-time .full-range { color: var(--ink-dim); font-size: 0.72rem; }
+
+.vol {
+  margin-top: 2px;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.vol-low { background: rgba(70, 201, 139, 0.18); color: var(--good); }
+.vol-medium { background: rgba(255, 176, 32, 0.18); color: var(--accent); }
+.vol-high { background: rgba(255, 99, 99, 0.2); color: #ff8080; }
+.vol-unknown { background: var(--line); color: var(--ink-dim); }
+
+.empty { color: var(--ink-dim); font-style: italic; }
+
+.save-status {
+  margin: 0 0 12px;
+  color: var(--good);
+  font-size: 0.78rem;
+  min-height: 1em;
+}
+
+.refresh-btn { margin-top: 10px; }
+
+.refresh-status {
+  color: var(--ink-dim);
+  min-height: 1em;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.refresh-status.show { opacity: 1; }
+
+/* Pull-to-refresh indicator: sits just above the top edge and slides down. */
+.ptr-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-40px);
+  z-index: 50;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.8rem;
+  color: var(--accent-ink);
+  background: var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.ptr-indicator.visible { opacity: 1; }
+
+.season-banner {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 176, 32, 0.12);
+  border: 1px solid rgba(255, 176, 32, 0.3);
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+
+.weather-banner {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(120, 150, 255, 0.14);
+  border: 1px solid rgba(120, 150, 255, 0.35);
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+.weather-banner.weather-muted {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink-dim);
+}
+.weather-headline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.weather-icon { font-size: 1.3rem; line-height: 1; }
+.weather-note { margin-top: 6px; font-size: 0.8rem; color: var(--ink-dim); }
+
+.bestbet-card {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(70, 201, 139, 0.18), rgba(70, 201, 139, 0.06));
+  border: 1px solid rgba(70, 201, 139, 0.45);
+}
+.bestbet-title {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--good);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.bestbet-headline {
+  font-size: 1.15rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.bestbet-headline strong { color: var(--good); }
+.bestbet-headline .pill { vertical-align: middle; }
+.bestbet-detail {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+}
+.bestbet-empty {
+  background: var(--panel-2);
+  border-color: var(--line);
+}
+.bestbet-empty .bestbet-title { color: var(--ink-dim); }
+
+.bestbet-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid rgba(70, 201, 139, 0.3);
+}
+.bestbet-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+.bestbet-list .bb-pill { flex: 0 0 auto; }
+.bestbet-list .bb-time { font-weight: 700; color: var(--ink); min-width: 3.5em; }
+.bestbet-list .bb-pos { color: var(--ink-dim); min-width: 3em; }
+.bestbet-list .bb-range { color: var(--ink-dim); flex: 1; }
+@media (max-width: 420px) {
+  .bestbet-list .bb-range { display: none; }
+}
+
+.odds-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+}
+.odds-big {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--good);
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.odds-text { font-size: 0.85rem; color: var(--ink); }
+.odds-sub { display: block; margin-top: 3px; color: var(--ink-dim); font-size: 0.78rem; }
+
+.opp-card {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(120, 150, 255, 0.18), rgba(120, 150, 255, 0.06));
+  border: 1px solid rgba(120, 150, 255, 0.45);
+}
+.opp-title {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9db0ff;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.opp-headline { font-size: 1.1rem; color: var(--ink); }
+.opp-headline strong { color: #c3cfff; }
+.opp-detail { margin-top: 8px; font-size: 0.85rem; color: var(--ink-dim); }
+.opp-detail .pill { margin: 0 1px; vertical-align: middle; }
+
+.app-footer { padding: 16px 16px calc(env(safe-area-inset-bottom) + 24px); }

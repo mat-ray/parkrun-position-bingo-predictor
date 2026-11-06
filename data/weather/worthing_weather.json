@@ -1,0 +1,25 @@
+{
+  "slug": "worthing",
+  "events": [
+    {
+      "event_number": 434,
+      "date": "2026-10-24",
+      "field_size": 495,
+      "weather": {
+        "temp_c": 12.1,
+        "precip_mm": 0.0,
+        "wind_kmh": 17.7
+      }
+    },
+    {
+      "event_number": 435,
+      "date": "2026-10-31",
+      "field_size": 618,
+      "weather": {
+        "temp_c": 10.3,
+        "precip_mm": 0.0,
+        "wind_kmh": 13.3
+      }
+    }
+  ]
+}

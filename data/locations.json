@@ -1,0 +1,10 @@
+{
+  "bournemouth": { "lat": 50.7314, "lon": -1.838, "placename": "Kings Park Athletics Centre, Boscombe" },
+  "bushy": { "lat": 51.41099, "lon": -0.33579, "placename": "Bushy Park, Teddington" },
+  "crane": { "lat": 51.44417, "lon": -0.38025, "placename": "Crane Park, Twickenham" },
+  "downslinkshorehambysea": { "lat": 50.84, "lon": -0.287, "placename": "Downs Link south end, Shoreham-by-Sea" },
+  "kingston": { "lat": 51.4236, "lon": -0.3125, "placename": "Canbury Gardens, Kingston upon Thames" },
+  "littlehamptonprom": { "lat": 50.805, "lon": -0.538, "placename": "Littlehampton seafront promenade" },
+  "northfarm": { "lat": 51.148, "lon": 0.29, "placename": "North Farm / Dowding Way, Tunbridge Wells" },
+  "worthing": { "lat": 50.81031, "lon": -0.3645, "placename": "Worthing promenade" }
+}

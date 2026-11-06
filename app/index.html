@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2b223f" />
+  <title>Parkrun Position Bingo Predictor</title>
+  <!-- PWA: installable, full-screen, offline. -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Position Bingo" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="ptr-indicator" class="ptr-indicator" aria-hidden="true"></div>
+  <header class="app-header">
+    <h1>Position&nbsp;Bingo Predictor</h1>
+    <p class="tagline">
+      Find the finish times to aim for to tick off your bingo numbers.
+      <button id="info-btn" class="about-btn" type="button">About</button>
+    </p>
+  </header>
+
+  <div id="info-overlay" class="info-overlay" hidden>
+    <div class="info-panel" role="dialog" aria-modal="true" aria-labelledby="info-title">
+      <button id="info-close" class="info-close" type="button" aria-label="Close">&times;</button>
+      <h2 id="info-title">How this works</h2>
+      <p>Position Bingo is about the <strong>finishing position</strong> you get,
+        not your time. Position 3, 103, 203&hellip; all tick <strong>03</strong>;
+        100, 200&hellip; tick <strong>00</strong>. The card runs 00&ndash;99.</p>
+      <p>Your position depends on how fast everyone else runs that day. This app
+        learns from your event's past results to tell you roughly what
+        <strong>time</strong> tends to land you in the positions that would tick
+        the numbers you still need.</p>
+      <h3>Why it's chances, not certainty</h3>
+      <p>A target time doesn't pin you to one exact place &mdash; on any given
+        week you'll finish somewhere within a spread of ~20&ndash;30 positions
+        around it, depending on who turns up. So aiming <em>concentrates</em>
+        your odds on the places you want; it can't guarantee them.</p>
+      <h3>How much does aiming help?</h3>
+      <p>Compared with just turning up and running any time, aiming at a
+        recommended target meaningfully lifts your weekly chance of ticking a
+        number &mdash; and it helps <strong>most when you need it most</strong>:</p>
+      <ul>
+        <li>Down to your <strong>last few numbers</strong>, aiming can be several
+          times more likely to tick one than running blind.</li>
+        <li>When you still need <strong>lots</strong> of numbers, just turning up
+          already ticks something most weeks, so the extra lift is smaller.</li>
+      </ul>
+      <p>The percentage shown in your results is an estimate for the numbers you
+        currently have left, based on your event's history.</p>
+      <h3>Seasons &amp; weather</h3>
+      <p>Fields swing with the time of year and the forecast. The app weights
+        toward events around your chosen date, and &mdash; for the coming
+        Saturday &mdash; eases targets if rain or strong wind is forecast, since
+        a thinner field (especially at the back) means a given place is a little
+        slower. Each event is calibrated to its own history, so weather-proof
+        events barely move.</p>
+      <p class="info-foot">Predictions are guidance from past data. Actual
+        results depend on who shows up on the day.</p>
+    </div>
+  </div>
+
+  <main>
+    <section class="panel">
+      <div class="field">
+        <label for="event-select">Event</label>
+        <select id="event-select"></select>
+        <p id="event-meta" class="meta"></p>
+      </div>
+      <!-- Laptop-only convenience; hidden when running as the installed PWA
+           (pull-to-refresh is used there instead). -->
+      <button id="refresh-data" type="button" class="ghost refresh-btn" hidden>
+        Check for data updates
+      </button>
+    </section>
+
+    <section class="panel">
+      <h2>1. Which Saturday?</h2>
+      <p class="hint">
+        Turnout shifts through the year, so the same time lands you in a
+        different position in a quiet winter field vs. a busy summer one. Pick
+        the Saturday you're aiming for and we weight the data toward that time
+        of year.
+      </p>
+      <div class="field">
+        <label for="target-date">Target date</label>
+        <input id="target-date" type="date" />
+        <p id="season-meta" class="meta"></p>
+      </div>
+      <label class="checkbox-row">
+        <input id="use-season" type="checkbox" checked />
+        <span>Weight by time of year (&plusmn;3 weeks)</span>
+      </label>
+      <label class="checkbox-row">
+        <input id="use-weather" type="checkbox" checked />
+        <span>Adjust for this Saturday's forecast (when within a week)</span>
+      </label>
+    </section>
+
+    <section class="panel">
+      <h2>2. Numbers you still need</h2>
+      <p class="hint">
+        The card runs 00&ndash;99. Position 3, 103, 203&hellip; all tick
+        <strong>03</strong>; position 100, 200&hellip; tick <strong>00</strong>.
+        Tap the numbers you still have to get.
+      </p>
+      <div class="toolbar">
+        <button id="select-all" type="button" class="ghost">Select all</button>
+        <button id="clear-all" type="button" class="ghost">Clear</button>
+        <button id="reset-saved" type="button" class="ghost">Reset saved</button>
+        <span id="need-count" class="meta"></span>
+      </div>
+      <p id="save-status" class="meta save-status" aria-live="polite"></p>
+      <div id="bingo-grid" class="bingo-grid" role="group" aria-label="Bingo numbers 00 to 99"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Your realistic pace</h2>
+      <p class="hint">
+        Optional. Set roughly how fast you finish so we only show positions you
+        could actually reach. Leave blank to see every option.
+      </p>
+      <div class="pace-row">
+        <div class="field">
+          <label for="pace-min">From</label>
+          <input id="pace-min" type="text" inputmode="numeric" placeholder="e.g. 22:00" />
+        </div>
+        <div class="field">
+          <label for="pace-max">To</label>
+          <input id="pace-max" type="text" inputmode="numeric" placeholder="e.g. 28:00" />
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <button id="predict" type="button" class="primary">Show target times</button>
+    </section>
+
+    <section id="results" class="panel results" hidden>
+      <h2 id="results-title">Target times</h2>
+      <div id="results-body"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p id="refresh-status" class="meta refresh-status" aria-live="polite"></p>
+    <p id="data-note" class="meta"></p>
+    <p class="meta tiny">
+      Predictions are based on past finish data from your saved results pages.
+      Actual position depends on who turns up on the day.
+    </p>
+  </footer>
+
+  <!-- Bundled data (generated by build.py). Lets the app run from file://
+       with no server. If absent, the app falls back to fetch(). -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+  <!-- Register the service worker for offline use. Only works over http(s);
+       harmless (and skipped) when opened from file:// or the standalone file. -->
+  <script>
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => { /* offline-only is fine */ });
+      });
+    }
+  </script>
+</body>
+</html>

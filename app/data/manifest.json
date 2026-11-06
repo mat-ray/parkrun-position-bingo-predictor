@@ -1,0 +1,100 @@
+{
+  "events": [
+    {
+      "slug": "bournemouth",
+      "name": "Bournemouth",
+      "event_count": 157,
+      "date_range": [
+        "2023-10-14",
+        "2026-10-31"
+      ],
+      "max_position": 775,
+      "lat": 50.7314,
+      "lon": -1.838
+    },
+    {
+      "slug": "bushy",
+      "name": "Bushy",
+      "event_count": 1,
+      "date_range": [
+        "2026-10-31",
+        "2026-10-31"
+      ],
+      "max_position": 1700,
+      "lat": 51.41099,
+      "lon": -0.33579
+    },
+    {
+      "slug": "crane",
+      "name": "Crane Park",
+      "event_count": 151,
+      "date_range": [
+        "2023-11-18",
+        "2026-10-31"
+      ],
+      "max_position": 292,
+      "lat": 51.44417,
+      "lon": -0.38025
+    },
+    {
+      "slug": "downslinkshorehambysea",
+      "name": "Downs Link",
+      "event_count": 1,
+      "date_range": [
+        "2026-10-31",
+        "2026-10-31"
+      ],
+      "max_position": 161,
+      "lat": 50.84,
+      "lon": -0.287
+    },
+    {
+      "slug": "kingston",
+      "name": "Kingston",
+      "event_count": 154,
+      "date_range": [
+        "2023-10-28",
+        "2026-10-31"
+      ],
+      "max_position": 547,
+      "lat": 51.4236,
+      "lon": -0.3125
+    },
+    {
+      "slug": "littlehamptonprom",
+      "name": "Littlehampton Prom",
+      "event_count": 151,
+      "date_range": [
+        "2023-10-14",
+        "2026-10-31"
+      ],
+      "max_position": 564,
+      "lat": 50.805,
+      "lon": -0.538
+    },
+    {
+      "slug": "northfarm",
+      "name": "North Farm",
+      "event_count": 3,
+      "date_range": [
+        "2026-10-10",
+        "2026-10-31"
+      ],
+      "max_position": 328,
+      "lat": 51.148,
+      "lon": 0.29
+    },
+    {
+      "slug": "worthing",
+      "name": "Worthing",
+      "event_count": 2,
+      "date_range": [
+        "2026-10-24",
+        "2026-10-31"
+      ],
+      "max_position": 618,
+      "lat": 50.81031,
+      "lon": -0.3645
+    }
+  ]
+}

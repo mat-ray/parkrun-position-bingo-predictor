@@ -1,0 +1,20 @@
+# --- Raw / local-only data (never published) --------------------------------
+# Saved parkrun results pages and the weekly download inbox stay on the Mac.
+# The hosted app serves the BUILT bundle (app/data.js + app/data/), which is
+# generated from these, so excluding them costs the app nothing.
+raweventdata/
+latestresults/
+
+# Derived-from-raw parsed finisher data (a re-serialisation of the raw pages).
+# Kept local for the same reason.
+data/raw/
+
+# Weather API response caches (regenerated on demand).
+data/weather/*_cache.json
+
+# --- OS / tooling junk -------------------------------------------------------
+.DS_Store
+**/.DS_Store
+__pycache__/
+**/__pycache__/
+*.pyc

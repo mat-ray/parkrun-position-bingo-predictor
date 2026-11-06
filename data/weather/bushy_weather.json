@@ -1,0 +1,15 @@
+{
+  "slug": "bushy",
+  "events": [
+    {
+      "event_number": 1114,
+      "date": "2026-10-31",
+      "field_size": 1700,
+      "weather": {
+        "temp_c": 9.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 6.2
+      }
+    }
+  ]
+}

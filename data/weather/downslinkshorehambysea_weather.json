@@ -1,0 +1,15 @@
+{
+  "slug": "downslinkshorehambysea",
+  "events": [
+    {
+      "event_number": 56,
+      "date": "2026-10-31",
+      "field_size": 161,
+      "weather": {
+        "temp_c": 10.2,
+        "precip_mm": 0.0,
+        "wind_kmh": 13.3
+      }
+    }
+  ]
+}
