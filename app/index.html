@@ -84,8 +84,19 @@
   <main>
     <section class="panel">
       <div class="field">
-        <label for="event-select">Event</label>
-        <select id="event-select"></select>
+        <div class="event-label-row">
+          <label for="event-input">Event</label>
+          <button id="event-fav" type="button" class="fav-btn" hidden
+                  aria-pressed="false" aria-label="Pin this event as a favourite"
+                  title="Pin this event as a favourite">&#9733;</button>
+        </div>
+        <div class="combo" id="event-combo">
+          <input id="event-input" type="text" class="combo-input"
+                 role="combobox" aria-expanded="false" aria-autocomplete="list"
+                 aria-controls="event-listbox" autocomplete="off"
+                 placeholder="Pick or search an event&hellip;" />
+          <ul id="event-listbox" class="combo-list" role="listbox" hidden></ul>
+        </div>
         <p id="event-meta" class="meta"></p>
       </div>
       <!-- Laptop-only convenience; hidden when running as the installed PWA

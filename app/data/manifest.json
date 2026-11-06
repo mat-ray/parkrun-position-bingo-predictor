@@ -87,9 +87,9 @@
     {
       "slug": "worthing",
       "name": "Worthing",
-      "event_count": 111,
+      "event_count": 125,
       "date_range": [
-        "2023-12-25",
+        "2023-08-19",
         "2026-10-31"
       ],
       "max_position": 769,

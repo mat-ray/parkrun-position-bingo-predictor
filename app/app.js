@@ -435,13 +435,14 @@ async function refreshData() {
     new Function(text)();
     const after = totalEvents(window.PBP_DATA);
 
-    // Rebuild the event dropdown + reload the current event from the new data.
+    // Reload the current event from the new data (the combobox reads the
+    // manifest live when its list opens, so there's no static list to rebuild).
     state.manifest = window.PBP_DATA.manifest;
-    repopulateEvents();
     const slug = state.slug && window.PBP_DATA.events[state.slug]
       ? state.slug : state.manifest.events[0].slug;
-    document.getElementById("event-select").value = slug;
     await selectEvent(slug);
+    setComboInputToSelected();
+    updateFavButton();
 
     // Ask the service worker to refresh its cached copy too (installed PWA).
     if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
@@ -466,18 +467,184 @@ async function refreshData() {
   }
 }
 
-// Re-fill the event <select> from the current manifest (after a refresh).
-function repopulateEvents() {
-  const sel = document.getElementById("event-select");
-  const current = sel.value;
-  sel.innerHTML = "";
-  for (const ev of state.manifest.events) {
-    const opt = document.createElement("option");
-    opt.value = ev.slug;
-    opt.textContent = ev.name;
-    sel.appendChild(opt);
+// ---------------------------------------------------------------------------
+// Event combobox — filterable picker with favourites pinned at the top.
+//
+// Scales to many events (e.g. one-off "away" parkruns scraped as single-week
+// snapshots) without an unwieldy dropdown: type to filter, and your pinned
+// favourites always sit at the top. Favourites + the current selection persist
+// in localStorage. Events with few samples are tagged "snapshot".
+// ---------------------------------------------------------------------------
+const FAVS_KEY = "pbp:favourites";       // array of favourite slugs
+const SNAPSHOT_MAX_EVENTS = 4;           // <= this many events => "snapshot" tag
+
+function loadFavourites() {
+  try {
+    const raw = localStorage.getItem(FAVS_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch (e) { return new Set(); }
+}
+function saveFavourites(set) {
+  try { localStorage.setItem(FAVS_KEY, JSON.stringify(Array.from(set))); }
+  catch (e) { /* ignore */ }
+}
+
+const combo = {
+  favs: new Set(),
+  open: false,
+  activeIndex: -1,   // keyboard-highlighted option index into the flat list
+  rows: [],          // current rendered option rows: {slug, name}
+};
+
+function eventBySlug(slug) {
+  return state.manifest.events.find((e) => e.slug === slug) || null;
+}
+function isSnapshot(ev) {
+  return (ev.event_count || 0) <= SNAPSHOT_MAX_EVENTS;
+}
+
+function initCombobox() {
+  combo.favs = loadFavourites();
+  const input = document.getElementById("event-input");
+  const list = document.getElementById("event-listbox");
+  const favBtn = document.getElementById("event-fav");
+
+  const open = () => { combo.open = true; input.setAttribute("aria-expanded", "true"); renderComboList(input.value); list.hidden = false; };
+  const close = () => { combo.open = false; input.setAttribute("aria-expanded", "false"); list.hidden = true; combo.activeIndex = -1; };
+
+  // Focus/click opens the full list; typing filters it.
+  input.addEventListener("focus", () => { input.select(); open(); });
+  input.addEventListener("input", () => { open(); renderComboList(input.value); });
+
+  input.addEventListener("keydown", (e) => {
+    if (!combo.open && (e.key === "ArrowDown" || e.key === "Enter")) { open(); return; }
+    if (e.key === "ArrowDown") { e.preventDefault(); moveActive(1); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); moveActive(-1); }
+    else if (e.key === "Enter") {
+      e.preventDefault();
+      const row = combo.rows[combo.activeIndex] || combo.rows[0];
+      if (row) chooseEvent(row.slug);
+    } else if (e.key === "Escape") { close(); input.blur(); }
+  });
+
+  // Click outside closes.
+  document.addEventListener("click", (e) => {
+    if (!document.getElementById("event-combo").contains(e.target)
+        && e.target !== favBtn) close();
+  });
+
+  // Favourite pin toggles the CURRENT event.
+  favBtn.addEventListener("click", () => {
+    if (!state.slug) return;
+    if (combo.favs.has(state.slug)) combo.favs.delete(state.slug);
+    else combo.favs.add(state.slug);
+    saveFavourites(combo.favs);
+    updateFavButton();
+    if (combo.open) renderComboList(input.value);
+  });
+
+  combo._open = open;
+  combo._close = close;
+}
+
+// Choose an event from the list: load it, sync UI, persist, close.
+async function chooseEvent(slug) {
+  combo._close();
+  await selectEvent(slug);
+  setComboInputToSelected();
+  updateFavButton();
+  saveState();   // remember the chosen event for next visit
+  document.getElementById("event-input").blur();
+}
+
+function setComboInputToSelected() {
+  const ev = state.slug ? eventBySlug(state.slug) : null;
+  const input = document.getElementById("event-input");
+  if (input && ev) input.value = ev.name;
+}
+
+function updateFavButton() {
+  const favBtn = document.getElementById("event-fav");
+  if (!favBtn) return;
+  if (!state.slug) { favBtn.hidden = true; return; }
+  const on = combo.favs.has(state.slug);
+  favBtn.hidden = false;
+  favBtn.classList.toggle("is-fav", on);
+  favBtn.setAttribute("aria-pressed", String(on));
+  favBtn.title = on ? "Unpin this favourite" : "Pin this event as a favourite";
+  favBtn.setAttribute("aria-label", favBtn.title);
+}
+
+function moveActive(delta) {
+  const n = combo.rows.length;
+  if (!n) return;
+  combo.activeIndex = (combo.activeIndex + delta + n) % n;
+  highlightActive();
+}
+function highlightActive() {
+  const list = document.getElementById("event-listbox");
+  [...list.querySelectorAll(".combo-opt")].forEach((el, i) => {
+    el.classList.toggle("active", i === combo.activeIndex);
+    if (i === combo.activeIndex) el.scrollIntoView({ block: "nearest" });
+  });
+}
+
+// Build the filtered list: favourites first, then the rest (alphabetical).
+function renderComboList(query) {
+  const list = document.getElementById("event-listbox");
+  const q = (query || "").trim().toLowerCase();
+  const all = state.manifest.events.slice();
+
+  const match = (ev) => !q || ev.name.toLowerCase().includes(q)
+    || ev.slug.toLowerCase().includes(q);
+  const favs = all.filter((e) => combo.favs.has(e.slug) && match(e))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const rest = all.filter((e) => !combo.favs.has(e.slug) && match(e))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  list.innerHTML = "";
+  combo.rows = [];
+  combo.activeIndex = -1;
+
+  if (!favs.length && !rest.length) {
+    const li = document.createElement("li");
+    li.className = "combo-empty";
+    li.textContent = "No events match.";
+    list.appendChild(li);
+    return;
   }
-  if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+
+  const addGroupLabel = (text) => {
+    const li = document.createElement("li");
+    li.className = "combo-group-label";
+    li.setAttribute("aria-hidden", "true");
+    li.textContent = text;
+    list.appendChild(li);
+  };
+  const addOption = (ev) => {
+    const li = document.createElement("li");
+    li.className = "combo-opt";
+    li.setAttribute("role", "option");
+    li.setAttribute("aria-selected", String(ev.slug === state.slug));
+    li.dataset.slug = ev.slug;
+    const star = combo.favs.has(ev.slug) ? `<span class="opt-star">\u2605</span>` : "";
+    const tag = isSnapshot(ev) ? `<span class="opt-tag">snapshot</span>` : "";
+    li.innerHTML = star + `<span class="opt-name"></span>` + tag;
+    li.querySelector(".opt-name").textContent = ev.name;
+    li.addEventListener("click", () => chooseEvent(ev.slug));
+    list.appendChild(li);
+    combo.rows.push({ slug: ev.slug, name: ev.name });
+  };
+
+  if (favs.length) {
+    addGroupLabel("Favourites");
+    favs.forEach(addOption);
+  }
+  if (rest.length) {
+    if (favs.length) addGroupLabel("All events");
+    rest.forEach(addOption);
+  }
 }
 
 // Running as the installed PWA (standalone)? Used to hide the laptop-only button.
@@ -497,18 +664,7 @@ async function init() {
     return;
   }
 
-  const sel = document.getElementById("event-select");
-  sel.innerHTML = "";
-  for (const ev of state.manifest.events) {
-    const opt = document.createElement("option");
-    opt.value = ev.slug;
-    opt.textContent = ev.name;
-    sel.appendChild(opt);
-  }
-  sel.addEventListener("change", async () => {
-    await selectEvent(sel.value);
-    saveState();   // remember the chosen event for next visit
-  });
+  initCombobox();
 
   buildGrid();
   wireControls();
@@ -533,8 +689,9 @@ async function init() {
     const startSlug = state.manifest.events.some((e) => e.slug === savedSlug)
       ? savedSlug
       : state.manifest.events[0].slug;
-    document.getElementById("event-select").value = startSlug;
     await selectEvent(startSlug);
+    setComboInputToSelected();
+    updateFavButton();
   } else {
     showFatal("No events in the manifest yet. Add saved results pages and rebuild.");
   }
