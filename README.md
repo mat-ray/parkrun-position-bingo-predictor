@@ -129,34 +129,32 @@ page to see new data.
 etc.) and open `index.html`. Since the data is bundled in, there's nothing to
 fetch &mdash; it runs offline.
 
-### On an iPhone (recommended: single self-contained file)
+### On an iPhone (recommended: install the hosted PWA)
 
-This is the right way to get a reliable, offline home-screen app. `build.py`
-writes a **single self-contained file**, `app/index.standalone.html`, with the
-CSS, JS **and the whole data bundle inlined** &mdash; so it has no external
-dependencies and nothing to fetch. It cannot hang or time out, with or without
-the Mac, on any network.
+The app is published to GitHub Pages at a stable https URL and installs as a
+proper home-screen app &mdash; its own icon, full screen, and offline via the
+service worker. **No Mac needed after install.**
 
-Because the project folder syncs via iCloud, that file is already on your phone.
-To launch it with one tap:
+1. On the phone, open **Safari** at
+   <https://mat-ray.github.io/parkrun-position-bingo-predictor/>
+2. Share button &rarr; **Add to Home Screen**.
+3. Launch it from the new icon. The service worker caches the shell + data, so
+   it opens instantly and works offline from then on.
 
-1. Open the **Shortcuts** app and make a new shortcut.
-2. Add **Get Contents of File** and point it at
-   `.../app/index.standalone.html` in iCloud Drive (browse to it; don't type a
-   path &mdash; the phone's path differs from the Mac's).
-3. Add **Show Web Page** and pass it the file contents.
-4. Add the shortcut to your Home Screen.
+To update after adding data: run `./publish.sh` (or `collector/build.py`) and
+push to `main`. A GitHub Actions workflow redeploys the `app/` folder
+automatically, and the installed app picks up the new `data.js` on next launch
+(it refreshes network-first) or via pull-to-refresh.
 
-It runs fully offline. Re-run `build.py` after adding data, let iCloud sync, and
-the shortcut picks up the new version. You can also AirDrop or email the single
-file anywhere and open it the same way.
+> **Why not a local file or the Mac's IP?** iOS Safari refuses to render a local
+> `file://` HTML page, so the standalone file can't just be tapped open on a
+> phone. And installing from the Mac's dev-server IP (`http://<mac-ip>:8777/`)
+> pins the app to an origin that only exists while the Mac is awake and serving
+> &mdash; it stalls/times out otherwise. The hosted PWA above avoids both.
 
-> **Don't install the PWA from the Mac's IP address.** Tapping *Add to Home
-> Screen* on `http://<mac-ip>:8777/` pins the app to that origin, so every cold
-> launch tries to reach the Mac &mdash; and stalls/times out when the Mac is
-> asleep, the 10-minute serve window has expired, the IP has changed, or you're
-> on a different network. It looks installed but it isn't really offline. Use the
-> single-file approach above instead.
+The single self-contained `app/index.standalone.html` (CSS + JS + data inlined)
+still gets built for AirDrop/email/archival, but note iOS can't open it directly
+in Safari &mdash; the hosted PWA is the way to run it on a phone.
 
 ### Optional: run it as a local server (dev preview, Mac must stay up)
 
