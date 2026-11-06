@@ -1,6 +1,6 @@
 // Service worker — caches the app shell so the installed PWA works offline.
 // Bump CACHE_VERSION whenever the app files change so clients fetch fresh copies.
-const CACHE_VERSION = "pbp-v7";
+const CACHE_VERSION = "pbp-v8";
 const ASSETS = [
   "./",
   "./index.html",
@@ -12,6 +12,14 @@ const ASSETS = [
   "./icons/icon-512.png",
   "./icons/apple-touch-icon.png",
 ];
+
+// Let the page ask which cache version is actually running, so the About panel
+// can display it (a quick way to confirm a fresh shell vs. a stale cached one).
+self.addEventListener("message", (event) => {
+  if (event.data === "get-version" && event.source) {
+    event.source.postMessage({ type: "version", version: CACHE_VERSION });
+  }
+});
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

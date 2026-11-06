@@ -478,6 +478,7 @@ async function init() {
   wireControls();
   initDate();
   initRefresh();
+  initVersion();
 
   // Restore the one shared card + setup (migrating any old per-event data).
   const saved = loadSaved();
@@ -1350,6 +1351,36 @@ function initPullToRefresh() {
     indicator.classList.remove("visible");
     indicator.style.transform = "";
   }
+}
+
+// Show the running service-worker cache version at the bottom of the About
+// popup. Handy for confirming the phone is on the fresh shell, not a stale
+// cache: if this lags behind the latest published version, the PWA hasn't
+// picked up the new shell yet (fully close and reopen it to force the update).
+function initVersion() {
+  const el = document.getElementById("app-version");
+  if (!el) return;
+
+  // No service worker controlling the page (opened via file://, or not yet
+  // activated on first load) — say so rather than show a misleading number.
+  if (!("serviceWorker" in navigator) || !navigator.serviceWorker.controller) {
+    el.textContent = "Version: not cached (no service worker)";
+    return;
+  }
+
+  let answered = false;
+  navigator.serviceWorker.addEventListener("message", (e) => {
+    if (e.data && e.data.type === "version") {
+      answered = true;
+      el.textContent = `Version: ${e.data.version}`;
+    }
+  });
+  navigator.serviceWorker.controller.postMessage("get-version");
+
+  // Fallback if the worker doesn't reply (older cached SW without the handler).
+  setTimeout(() => {
+    if (!answered) el.textContent = "Version: unknown (reload to update)";
+  }, 1500);
 }
 
 // Clear this event's saved card + setup and reset the UI to defaults.
