@@ -130,8 +130,11 @@ main, .app-header, .app-footer {
 }
 .panel h2 { font-size: 1.05rem; margin: 0 0 8px; }
 
-/* Results header: unit toggle on its own line, right-aligned, above the title. */
-.results-head { margin: 0 0 8px; }
+/* Results header: unit toggle on its own line, right-aligned, above the title.
+   scroll-margin-top leaves a little breathing room above it when we scroll the
+   results into view, so the pace/time toggle sits clearly at the top rather
+   than being clipped just off-screen. */
+.results-head { margin: 0 0 8px; scroll-margin-top: 16px; }
 .results-head #results-title { margin: 0; }
 .unit-toggle {
   display: flex;

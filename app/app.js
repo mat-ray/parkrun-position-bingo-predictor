@@ -33,6 +33,7 @@ function saveState() {
     paceMin: document.getElementById("pace-min").value,
     paceMax: document.getElementById("pace-max").value,
     unit: state.unit,
+    slug: state.slug,
     savedAt: Date.now(),
   };
   try {
@@ -504,7 +505,10 @@ async function init() {
     opt.textContent = ev.name;
     sel.appendChild(opt);
   }
-  sel.addEventListener("change", () => selectEvent(sel.value));
+  sel.addEventListener("change", async () => {
+    await selectEvent(sel.value);
+    saveState();   // remember the chosen event for next visit
+  });
 
   buildGrid();
   wireControls();
@@ -523,7 +527,14 @@ async function init() {
   setRefreshStatus("");
 
   if (state.manifest.events.length) {
-    await selectEvent(state.manifest.events[0].slug);
+    // Default to the event you had selected last time, if it still exists;
+    // otherwise fall back to the first event in the manifest.
+    const savedSlug = saved && saved.slug;
+    const startSlug = state.manifest.events.some((e) => e.slug === savedSlug)
+      ? savedSlug
+      : state.manifest.events[0].slug;
+    document.getElementById("event-select").value = startSlug;
+    await selectEvent(startSlug);
   } else {
     showFatal("No events in the manifest yet. Add saved results pages and rebuild.");
   }
@@ -765,7 +776,7 @@ async function predict({ scroll = true } = {}) {
       + `finish. Run whatever time you fancy!</div>`
       + `</div>`;
     results.hidden = false;
-    if (scroll) results.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (scroll) scrollResultsIntoView();
     return;
   }
 
@@ -941,7 +952,16 @@ async function predict({ scroll = true } = {}) {
   results.hidden = false;
   }  // end renderResults
 
-  if (scroll) results.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (scroll) scrollResultsIntoView();
+}
+
+// Scroll the results into view aligned to the header (the pace/time toggle +
+// title), not the section box, so the toggle sits clearly at the top rather
+// than being scrolled just past. scroll-margin-top on .results-head adds a gap.
+function scrollResultsIntoView() {
+  const head = document.querySelector("#results .results-head")
+    || document.getElementById("results");
+  if (head) head.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // Lower = more reliable. Shared by the per-number best and the overall summary.
