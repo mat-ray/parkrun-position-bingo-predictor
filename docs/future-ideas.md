@@ -223,3 +223,71 @@ than running the model on-device. The bingo *card* (which numbers you need)
 realistically stays on the phone (entering 100 cells on a watch is painful);
 the watch reads the result. Same principle throughout: **server/pipeline does
 the thinking, the device displays the answer.**
+---
+
+## Official parkrun API (api.parkrun.com) — sanctioned data, IF access is granted
+
+There is an official parkrun REST API (Swagger docs at developer.parkrun.com,
+base URL `https://api.parkrun.com`, v1). It's **OAuth/token-gated** — every
+endpoint lists scopes (`core`, `app`, `ALL`, etc.) and calls need an
+`access_token`. parkrun grants these to approved partners/apps, not openly. So
+it is NOT a drop-in replacement today — but there appears to be a **request-
+access process** (an application doc exists), so it's worth pursuing rather than
+dismissing.
+
+### Read-only endpoints that would matter to this project
+
+- **`GET /v1/results`** — the real results feed, with `latestResults=true` and
+  `EventDate` filtering. This would replace the entire saved-pages / iOS-Shortcut
+  collection (and all its failure modes: empty files, the "every file is #435"
+  scraper bug, etc.).
+- **`GET /v1/cancellations/date`** — authoritative cancellations within 3 weeks
+  of a date. Replaces our date-gap *inference* (though note: only a ~3-week
+  window, not deep history).
+- **`GET /v1/geoLocations`** — event start coordinates. The sanctioned version
+  of the one-off `/course/` scrape that populates `data/locations.json`.
+- **`GET /v1/nearbyEvents` / `/nearbyEventsByPostcode`** — server-side "events
+  near this lat/lon". Directly supports the away-event picker and the Garmin
+  GPS-nearest-start idea.
+- **`GET /v1/resultsInTimeRange/<max>/<min>`** — athletes who ran within a time
+  band (athlete-centric, not a position distribution, but adjacent to the core
+  time<->position question).
+- **`GET /v1/targets` + `/targetsMeasurements`** — parkrun already models a
+  per-event target time AND "how results compared to targets". That's the
+  outcome-tracking/calibration feature, server-side.
+- **`GET /v1/favourites`** — server-side event favourites (we built this
+  client-side with the pin).
+
+Validation point: parkrun models cancellations, nearby-by-geo, target-vs-result,
+and favourites as first-class concepts — good confirmation the features we've
+built/planned are sensible, not quirky.
+
+### Hard blockers / things to resolve BEFORE building anything
+
+1. **Access is uncertain.** A personal hobby project may or may not qualify. Do
+   not rebuild the pipeline in anticipation — only once a token is actually in
+   hand.
+2. **Terms will constrain use — check the republishing question first.** The app
+   is hosted on **public** GitHub Pages. If the API terms forbid redistributing
+   / publicly republishing its data, that clashes with how we host. This is the
+   single most important clause to read before committing.
+3. **Rate limits** (`/v1/apiaccess`, `/v1/rate` expose limits) — the collector
+   would need to respect them.
+4. **Scope discipline + PII.** Request the *narrowest read-only* scopes; never
+   use write endpoints (`createScannerUpload`, `updateAthlete`, `createPassword`,
+   …) and never touch athlete PII. Keeps the "respect parkrun" stance intact.
+5. **Architecture shift.** The collector becomes network-dependent and
+   authenticated, vs today's offline-by-design. Fine *if* terms allow, but a real
+   change to the project's character.
+6. **Secrets handling.** Any token lives locally only — `.gitignore`'d like the
+   raw data, never committed (the repo is public).
+
+### Staged plan, when/if pursued
+
+1. Apply via the access-request process (needs the user's identity + agreeing to
+   terms — can't be automated here).
+2. On grant, read the terms carefully — especially public-republishing, rate
+   limits, allowed scopes.
+3. Only then build a small read-only `collector/fetch_api.py` (results +
+   cancellations + geoLocations), token held locally, respecting rate limits.
+   The rest of the pipeline (aggregate/build/publish) stays unchanged.
