@@ -134,7 +134,7 @@ main, .app-header, .app-footer {
    scroll-margin-top leaves a little breathing room above it when we scroll the
    results into view, so the pace/time toggle sits clearly at the top rather
    than being clipped just off-screen. */
-.results-head { margin: 0 0 8px; scroll-margin-top: 16px; }
+.results-head { margin: 0 0 8px; scroll-margin-top: 72px; }
 .results-head #results-title { margin: 0; }
 .unit-toggle {
   display: flex;
