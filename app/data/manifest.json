@@ -15,10 +15,10 @@
     {
       "slug": "bushy",
       "name": "Bushy",
-      "event_count": 1,
+      "event_count": 3,
       "date_range": [
         "2026-10-31",
-        "2026-10-31"
+        "2026-11-14"
       ],
       "max_position": 1700,
       "lat": 51.41099,
@@ -27,10 +27,10 @@
     {
       "slug": "crane",
       "name": "Crane Park",
-      "event_count": 151,
+      "event_count": 153,
       "date_range": [
         "2023-11-18",
-        "2026-10-31"
+        "2026-11-14"
       ],
       "max_position": 292,
       "lat": 51.44417,
@@ -39,22 +39,22 @@
     {
       "slug": "downslinkshorehambysea",
       "name": "Downs Link",
-      "event_count": 1,
+      "event_count": 3,
       "date_range": [
         "2026-10-31",
-        "2026-10-31"
+        "2026-11-14"
       ],
-      "max_position": 161,
+      "max_position": 240,
       "lat": 50.84,
       "lon": -0.287
     },
     {
       "slug": "kingston",
       "name": "Kingston",
-      "event_count": 154,
+      "event_count": 156,
       "date_range": [
         "2023-10-28",
-        "2026-10-31"
+        "2026-11-14"
       ],
       "max_position": 547,
       "lat": 51.4236,
@@ -63,10 +63,10 @@
     {
       "slug": "littlehamptonprom",
       "name": "Littlehampton Prom",
-      "event_count": 151,
+      "event_count": 153,
       "date_range": [
         "2023-10-14",
-        "2026-10-31"
+        "2026-11-14"
       ],
       "max_position": 564,
       "lat": 50.805,
@@ -75,10 +75,10 @@
     {
       "slug": "northfarm",
       "name": "North Farm",
-      "event_count": 3,
+      "event_count": 5,
       "date_range": [
         "2026-10-10",
-        "2026-10-31"
+        "2026-11-14"
       ],
       "max_position": 328,
       "lat": 51.148,
@@ -97,10 +97,10 @@
     {
       "slug": "worthing",
       "name": "Worthing",
-      "event_count": 138,
+      "event_count": 139,
       "date_range": [
         "2023-04-15",
-        "2026-10-31"
+        "2026-11-07"
       ],
       "max_position": 769,
       "lat": 50.81031,
