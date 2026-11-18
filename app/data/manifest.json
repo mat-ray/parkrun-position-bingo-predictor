@@ -3,10 +3,10 @@
     {
       "slug": "bournemouth",
       "name": "Bournemouth",
-      "event_count": 160,
+      "event_count": 161,
       "date_range": [
         "2023-10-14",
-        "2026-10-31"
+        "2026-11-14"
       ],
       "max_position": 775,
       "lat": 50.7314,
@@ -63,7 +63,7 @@
     {
       "slug": "littlehamptonprom",
       "name": "Littlehampton Prom",
-      "event_count": 155,
+      "event_count": 158,
       "date_range": [
         "2023-10-14",
         "2026-11-14"
@@ -87,12 +87,12 @@
     {
       "slug": "worthing",
       "name": "Worthing",
-      "event_count": 139,
+      "event_count": 163,
       "date_range": [
         "2023-04-15",
         "2026-11-07"
       ],
-      "max_position": 769,
+      "max_position": 776,
       "lat": 50.81031,
       "lon": -0.3645
     }
