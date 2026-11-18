@@ -108,6 +108,17 @@ def main() -> int:
     (APP_DATA / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(f"\nWrote app/data/manifest.json with {len(manifest_events)} event(s).")
 
+    # Remove per-event outputs for events that no longer exist (e.g. you deleted
+    # raweventdata/<slug>/). Otherwise the orphaned app/data/<slug>.json stays in
+    # git and on the published site. Only touches app/data/*.json that isn't the
+    # manifest and isn't in the current manifest.
+    live = {e["slug"] for e in manifest_events}
+    for stale in sorted(APP_DATA.glob("*.json")):
+        if stale.name == "manifest.json" or stale.stem in live:
+            continue
+        stale.unlink()
+        print(f"Removed stale output for retired event: app/data/{stale.name}")
+
     # Remind about any events lacking weather coordinates, so the forecast
     # adjustment isn't silently missing for a newly added event.
     no_coords = [e["slug"] for e in manifest_events if "lat" not in e]
