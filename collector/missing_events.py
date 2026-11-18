@@ -44,7 +44,10 @@ RESULT_SUFFIXES = (".html", ".htm", ".txt")
 # "<slug>-435", "<slug> 435", "<slug>_435": a number-named file. The slug part
 # must equal the folder name, which stops date-named files such as
 # "worthing-2026-10-31" or "Crane 14 Dec 2024" being mistaken for event numbers.
-_NUMBERED_RE = re.compile(r"^(.+?)[ \-_]+(\d{1,6})$")
+#
+# The optional trailing "txt"/"html" tolerates the Shortcut's occasional naming
+# quirk of "<slug>- 460txt.txt" (a doubled extension with no dot).
+_NUMBERED_RE = re.compile(r"^(.+?)[ \-_]+(\d{1,6})(?:txt|html?)?$", re.IGNORECASE)
 
 
 def _norm(s: str) -> str:
