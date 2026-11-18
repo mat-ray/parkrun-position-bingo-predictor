@@ -3,7 +3,7 @@
     {
       "slug": "bournemouth",
       "name": "Bournemouth",
-      "event_count": 157,
+      "event_count": 160,
       "date_range": [
         "2023-10-14",
         "2026-10-31"
@@ -27,12 +27,12 @@
     {
       "slug": "crane",
       "name": "Crane Park",
-      "event_count": 153,
+      "event_count": 155,
       "date_range": [
         "2023-11-18",
         "2026-11-14"
       ],
-      "max_position": 292,
+      "max_position": 321,
       "lat": 51.44417,
       "lon": -0.38025
     },
@@ -51,7 +51,7 @@
     {
       "slug": "kingston",
       "name": "Kingston",
-      "event_count": 156,
+      "event_count": 159,
       "date_range": [
         "2023-10-28",
         "2026-11-14"
@@ -63,7 +63,7 @@
     {
       "slug": "littlehamptonprom",
       "name": "Littlehampton Prom",
-      "event_count": 153,
+      "event_count": 155,
       "date_range": [
         "2023-10-14",
         "2026-11-14"
@@ -83,16 +83,6 @@
       "max_position": 328,
       "lat": 51.148,
       "lon": 0.29
-    },
-    {
-      "slug": "southwoodhamferrers",
-      "name": "South Woodham Ferrers",
-      "event_count": 5,
-      "date_range": [
-        "2026-10-03",
-        "2026-10-31"
-      ],
-      "max_position": 106
     },
     {
       "slug": "worthing",
