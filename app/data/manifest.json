@@ -27,9 +27,9 @@
     {
       "slug": "crane",
       "name": "Crane Park",
-      "event_count": 156,
+      "event_count": 157,
       "date_range": [
-        "2023-11-18",
+        "2023-01-07",
         "2026-11-21"
       ],
       "max_position": 321,
@@ -51,9 +51,9 @@
     {
       "slug": "kingston",
       "name": "Kingston",
-      "event_count": 160,
+      "event_count": 161,
       "date_range": [
-        "2023-10-28",
+        "2023-01-01",
         "2026-11-21"
       ],
       "max_position": 547,
