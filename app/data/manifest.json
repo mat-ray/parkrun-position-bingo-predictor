@@ -3,10 +3,10 @@
     {
       "slug": "bournemouth",
       "name": "Bournemouth",
-      "event_count": 162,
+      "event_count": 163,
       "date_range": [
         "2023-10-14",
-        "2026-11-14"
+        "2026-11-21"
       ],
       "max_position": 775,
       "lat": 50.7314,
@@ -15,10 +15,10 @@
     {
       "slug": "bushy",
       "name": "Bushy",
-      "event_count": 3,
+      "event_count": 4,
       "date_range": [
         "2026-10-31",
-        "2026-11-14"
+        "2026-11-21"
       ],
       "max_position": 1700,
       "lat": 51.41099,
@@ -27,10 +27,10 @@
     {
       "slug": "crane",
       "name": "Crane Park",
-      "event_count": 155,
+      "event_count": 156,
       "date_range": [
         "2023-11-18",
-        "2026-11-14"
+        "2026-11-21"
       ],
       "max_position": 321,
       "lat": 51.44417,
@@ -39,10 +39,10 @@
     {
       "slug": "downslinkshorehambysea",
       "name": "Downs Link",
-      "event_count": 3,
+      "event_count": 4,
       "date_range": [
         "2026-10-31",
-        "2026-11-14"
+        "2026-11-21"
       ],
       "max_position": 240,
       "lat": 50.84,
@@ -51,10 +51,10 @@
     {
       "slug": "kingston",
       "name": "Kingston",
-      "event_count": 159,
+      "event_count": 160,
       "date_range": [
         "2023-10-28",
-        "2026-11-14"
+        "2026-11-21"
       ],
       "max_position": 547,
       "lat": 51.4236,
@@ -63,10 +63,10 @@
     {
       "slug": "littlehamptonprom",
       "name": "Littlehampton Prom",
-      "event_count": 158,
+      "event_count": 159,
       "date_range": [
         "2023-10-14",
-        "2026-11-14"
+        "2026-11-21"
       ],
       "max_position": 564,
       "lat": 50.805,
@@ -75,10 +75,10 @@
     {
       "slug": "northfarm",
       "name": "North Farm",
-      "event_count": 5,
+      "event_count": 6,
       "date_range": [
         "2026-10-10",
-        "2026-11-14"
+        "2026-11-21"
       ],
       "max_position": 328,
       "lat": 51.148,
