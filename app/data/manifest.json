@@ -3,9 +3,9 @@
     {
       "slug": "bournemouth",
       "name": "Bournemouth",
-      "event_count": 163,
+      "event_count": 202,
       "date_range": [
-        "2023-10-14",
+        "2023-01-01",
         "2026-11-21"
       ],
       "max_position": 775,
@@ -15,12 +15,12 @@
     {
       "slug": "bushy",
       "name": "Bushy",
-      "event_count": 4,
+      "event_count": 173,
       "date_range": [
-        "2026-10-31",
+        "2023-01-01",
         "2026-11-21"
       ],
-      "max_position": 1700,
+      "max_position": 6204,
       "lat": 51.41099,
       "lon": -0.33579
     },
@@ -39,12 +39,12 @@
     {
       "slug": "downslinkshorehambysea",
       "name": "Downs Link",
-      "event_count": 4,
+      "event_count": 43,
       "date_range": [
-        "2026-10-31",
+        "2025-10-11",
         "2026-11-21"
       ],
-      "max_position": 240,
+      "max_position": 413,
       "lat": 50.84,
       "lon": -0.287
     },
@@ -63,9 +63,9 @@
     {
       "slug": "littlehamptonprom",
       "name": "Littlehampton Prom",
-      "event_count": 159,
+      "event_count": 179,
       "date_range": [
-        "2023-10-14",
+        "2023-01-01",
         "2026-11-21"
       ],
       "max_position": 564,
@@ -85,11 +85,21 @@
       "lon": 0.29
     },
     {
+      "slug": "poole",
+      "name": "Poole",
+      "event_count": 238,
+      "date_range": [
+        "2016-03-19",
+        "2023-01-07"
+      ],
+      "max_position": 1345
+    },
+    {
       "slug": "worthing",
       "name": "Worthing",
-      "event_count": 163,
+      "event_count": 176,
       "date_range": [
-        "2023-04-15",
+        "2023-01-07",
         "2026-11-07"
       ],
       "max_position": 776,
